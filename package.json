@@ -1,0 +1,33 @@
+{
+	"name": "eidos",
+	"version": "0.0.1",
+	"description": "Geometry and physics library for creative coding in JavaScript and TypeScript.",
+	"keywords": [
+		"geometry",
+		"physics",
+		"typescript",
+		"javascript",
+		"p5.js"
+	],
+	"homepage": "https://github.com/aidanwyber/Eidos#readme",
+	"bugs": {
+		"url": "https://github.com/aidanwyber/Eidos/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/aidanwyber/Eidos.git"
+	},
+	"license": "MIT",
+	"author": "Aidan Wyber",
+	"type": "module",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"files": [
+		"/dist"
+	],
+	"scripts": {},
+	"dependencies": {
+		"tsc": "^2.0.4"
+	},
+	"devDependencies": {}
+}
