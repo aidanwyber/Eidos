@@ -22,6 +22,7 @@
 		"noUncheckedSideEffectImports": true,
 		"moduleDetection": "force",
 		"skipLibCheck": true,
+		"moduleResolution": "node",
 
 		/* Browser dev tools */
 		"sourceMap": true,

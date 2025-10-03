@@ -10,7 +10,8 @@ export declare class Line {
     getMidpoint(): Vec;
     copy(): Line;
     toString(): string;
-    intersectLine(line: Line): Vec;
+    intersectLine(line: Line): Vec | null;
     intersectCircle(circle: Circle): Vec[];
     static fromAngleLength(angle: number, length: number, origin?: Vec): Line;
 }
+//# sourceMappingURL=Line.d.ts.map

@@ -1,5 +1,8 @@
 import { Vec } from './Vec';
+import { Circle } from './Circle';
 export class Line {
+    a;
+    b;
     constructor(a, b) {
         this.a = a;
         this.b = b;
@@ -71,3 +74,4 @@ export class Line {
         return new Line(a, b);
     }
 }
+//# sourceMappingURL=Line.js.map

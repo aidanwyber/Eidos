@@ -41,3 +41,4 @@ export declare class Vec {
     static angleBetween(a: Vec, b: Vec): number;
     static angleFromTo(a: Vec, b: Vec): number;
 }
+//# sourceMappingURL=Vec.d.ts.map

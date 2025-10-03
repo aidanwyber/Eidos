@@ -1,0 +1,1 @@
+{"version":3,"file":"Circle.d.ts","sourceRoot":"","sources":["../../src/geom/Circle.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,GAAG,EAAE,MAAM,OAAO,CAAC;AAE5B,qBAAa,MAAO,SAAQ,GAAG;IAC9B,MAAM,EAAE,MAAM,CAAC;gBAEH,MAAM,EAAE,GAAG,EAAE,MAAM,EAAE,MAAM;IAKvC,eAAe,CAAC,EAAE,EAAE,GAAG;IAIvB,gBAAgB,CAAC,CAAC,EAAE,MAAM,GAAG,MAAM;CAGnC"}

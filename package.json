@@ -3,9 +3,9 @@
 	"version": "0.0.1",
 	"description": "Geometry and physics library for creative coding in JavaScript and TypeScript.",
 	"type": "module",
-	"main": "dist/index.js",
-	"module": "dist/index.mjs",
-	"types": "dist/index.d.ts",
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
 	"keywords": [
 		"geometry",
 		"physics",
@@ -24,7 +24,7 @@
 	"license": "MIT",
 	"author": "Aidan Wyber",
 	"files": [
-		"/dist"
+		"./dist"
 	],
 	"scripts": {
 		"build": "tsup src/index.ts --format cjs,esm --dts"
@@ -32,5 +32,25 @@
 	"devDependencies": {
 		"tsup": "^8.5.0",
 		"typescript": "^5.9.3"
+	},
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"require": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./physics": {
+			"import": "./dist/physics/index.js",
+			"require": "./dist/physics/index.js",
+			"types": "./dist/physics/index.d.ts"
+		},
+		"./geometry": {
+			"import": "./dist/geometry/index.js",
+			"require": "./dist/geometry/index.js",
+			"types": "./dist/geometry/index.d.ts"
+		}
+	},
+	"dependencies": {
+		"p5": "^2.0.5"
 	}
 }

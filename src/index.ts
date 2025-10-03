@@ -1,2 +1,3 @@
-export * as Geom from './geom/index';
-export * as Physics from './physics/index';
+export * from './physics';
+export * from './geom';
+export * from './gfx';

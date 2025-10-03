@@ -1,3 +1,4 @@
-export { Vec } from './Vec';
-export { Line } from './Line';
-export { Circle } from './Circle';
+export * from './Vec';
+export * from './Line';
+export * from './Circle';
+export * from './Rect';

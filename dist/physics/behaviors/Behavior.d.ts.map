@@ -1,0 +1,1 @@
+{"version":3,"file":"Behavior.d.ts","sourceRoot":"","sources":["../../../src/physics/behaviors/Behavior.ts"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,QAAQ,EAAE,MAAM,aAAa,CAAC;AAE5C,MAAM,WAAW,QAAQ;IACxB,aAAa,EAAE,CAAC,CAAC,EAAE,QAAQ,KAAK,IAAI,CAAC;CACrC"}

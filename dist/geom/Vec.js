@@ -1,7 +1,7 @@
 export class Vec {
+    x = 0;
+    y = 0;
     constructor(x, y) {
-        this.x = 0;
-        this.y = 0;
         if (x instanceof Vec) {
             this.x = x.x;
             this.y = x.y;
@@ -132,6 +132,7 @@ export class Vec {
         this.set(this.projectOnto(v));
         return this;
     }
+    static epsilon = 1e-4;
     static random2D() {
         let angle = Math.random() * Math.PI * 2;
         return new Vec(Math.cos(angle), Math.sin(angle));
@@ -164,4 +165,4 @@ export class Vec {
         return Math.atan2(b.y - a.y, b.x - a.x);
     }
 }
-Vec.epsilon = 1e-4;
+//# sourceMappingURL=Vec.js.map
