@@ -11,4 +11,8 @@ export class Circle extends Vec {
 	distanceToPoint(pt: Vec) {
 		return this.distanceTo(pt) - this.radius;
 	}
+
+	distanceToCircle(c: Circle): number {
+		return this.distanceTo(c) - this.radius - c.radius;
+	}
 }

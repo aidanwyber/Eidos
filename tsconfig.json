@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"module": "ESNext",
-		"target": "ES2015", // ES2022
+		"target": "ES2022",
 		"outDir": "./dist",
 
 		"declaration": true,
@@ -13,6 +13,9 @@
 		"noUnusedParameters": true,
 		"erasableSyntaxOnly": true,
 		"noFallthroughCasesInSwitch": true,
+
+		"noUncheckedIndexedAccess": true,
+		"exactOptionalPropertyTypes": true,
 
 		"verbatimModuleSyntax": true,
 		"isolatedModules": true,
