@@ -2,6 +2,10 @@
 	"name": "eidos",
 	"version": "0.0.1",
 	"description": "Geometry and physics library for creative coding in JavaScript and TypeScript.",
+	"type": "module",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"types": "dist/index.d.ts",
 	"keywords": [
 		"geometry",
 		"physics",
@@ -19,15 +23,14 @@
 	},
 	"license": "MIT",
 	"author": "Aidan Wyber",
-	"type": "module",
-	"main": "dist/index.js",
-	"types": "dist/index.d.ts",
 	"files": [
 		"/dist"
 	],
-	"scripts": {},
-	"dependencies": {
-		"tsc": "^2.0.4"
+	"scripts": {
+		"build": "tsup src/index.ts --format cjs,esm --dts"
 	},
-	"devDependencies": {}
+	"devDependencies": {
+		"tsup": "^8.5.0",
+		"typescript": "^5.9.3"
+	}
 }
