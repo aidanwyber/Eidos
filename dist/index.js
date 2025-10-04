@@ -247,6 +247,66 @@ var Particle = class extends Vec {
   // }
 };
 
+// src/physics/ParticleEmitter.ts
+var ParticleEmitter = class {
+  constructor(position, rate, factory) {
+    this.accumulator = 0;
+    this.isEmitting = true;
+    this.position = new Vec(position);
+    this.rate = rate;
+    this.factory = factory;
+  }
+  setPosition(position) {
+    this.position.set(position);
+  }
+  setRate(rate) {
+    this.rate = rate;
+  }
+  emit() {
+    return this.factory(new Vec(this.position));
+  }
+  /**
+   * Update the emitter and emit particles into the physics engine.
+   * @param engine Target engine that receives new particles.
+   * @param deltaTime Time step multiplier (1 = one frame).
+   */
+  update(engine, deltaTime = 1) {
+    if (!this.isEmitting) return;
+    this.accumulator += this.rate * deltaTime;
+    while (this.accumulator >= 1) {
+      const particle = this.emit();
+      engine.addParticle(particle);
+      this.accumulator -= 1;
+    }
+  }
+};
+
+// src/physics/ParticleSink.ts
+var ParticleSink = class {
+  constructor(position, radius) {
+    this.position = new Vec(position);
+    this.radius = radius;
+  }
+  setPosition(position) {
+    this.position.set(position);
+  }
+  setRadius(radius) {
+    this.radius = radius;
+  }
+  contains(p) {
+    return p.distanceToSq(this.position) <= this.radius * this.radius;
+  }
+  absorb(engine) {
+    const remaining = [];
+    for (const particle of engine.particles) {
+      if (!this.contains(particle)) {
+        remaining.push(particle);
+      }
+    }
+    engine.particles = remaining;
+  }
+};
+
 // src/geom/Line.ts
 var Line = class _Line {
   constructor(a, b) {
@@ -598,6 +658,157 @@ var SpringChain = class {
   // }
 };
 
+// src/physics/behaviors/AttractBehavior.ts
+var DEFAULT_MIN_DISTANCE = 1;
+var AttractBehavior = class {
+  constructor(target, strength, radius, minDistance = DEFAULT_MIN_DISTANCE) {
+    this.target = target;
+    this.strength = strength;
+    this.radiusSq = radius !== void 0 ? radius * radius : Number.POSITIVE_INFINITY;
+    this.minDistanceSq = Math.max(minDistance * minDistance, DEFAULT_MIN_DISTANCE * DEFAULT_MIN_DISTANCE);
+  }
+  applyBehavior(p) {
+    if (p.isLocked) return;
+    if (p === this.target) return;
+    const dir = this.target.sub(p);
+    const distSq = dir.magSq();
+    if (distSq === 0) return;
+    if (distSq > this.radiusSq) return;
+    const limitedDistSq = Math.max(distSq, this.minDistanceSq);
+    const forceMagnitude = this.strength / limitedDistSq;
+    const force = dir.normalizeTo(forceMagnitude);
+    p.addForce(force);
+  }
+};
+
+// src/physics/behaviors/BounceBehavior.ts
+var BounceBehavior = class {
+  constructor(bounds, restitution = 1) {
+    this.bounds = { ...bounds };
+    this.restitution = restitution;
+  }
+  applyBehavior(p) {
+    if (p.isLocked) return;
+    const left = this.bounds.x + p.radius;
+    const right = this.bounds.x + this.bounds.width - p.radius;
+    const top = this.bounds.y + p.radius;
+    const bottom = this.bounds.y + this.bounds.height - p.radius;
+    let velocity = p.getVelocity();
+    let bounced = false;
+    if (p.x < left) {
+      p.x = left;
+      velocity = new Vec(-velocity.x * this.restitution, velocity.y);
+      bounced = true;
+    } else if (p.x > right) {
+      p.x = right;
+      velocity = new Vec(-velocity.x * this.restitution, velocity.y);
+      bounced = true;
+    }
+    if (p.y < top) {
+      p.y = top;
+      velocity = new Vec(velocity.x, -velocity.y * this.restitution);
+      bounced = true;
+    } else if (p.y > bottom) {
+      p.y = bottom;
+      velocity = new Vec(velocity.x, -velocity.y * this.restitution);
+      bounced = true;
+    }
+    if (bounced) {
+      p.setVelocity(velocity);
+    }
+  }
+};
+
+// src/physics/behaviors/ConstantForceBehavior.ts
+var ConstantForceBehavior = class {
+  constructor(force) {
+    this.force = new Vec(force);
+  }
+  applyBehavior(p) {
+    if (p.isLocked) return;
+    p.addForce(this.force);
+  }
+};
+
+// src/physics/behaviors/DragBehavior.ts
+var DragBehavior = class {
+  constructor(coefficient) {
+    this.coefficient = coefficient;
+  }
+  applyBehavior(p) {
+    if (p.isLocked) return;
+    const velocity = p.getVelocity();
+    const speedSq = velocity.magSq();
+    if (speedSq === 0) return;
+    const dragMagnitude = this.coefficient * speedSq;
+    const drag = velocity.normalizeTo(-dragMagnitude);
+    p.addForce(drag);
+  }
+};
+
+// src/physics/behaviors/FrictionBehavior.ts
+var FrictionBehavior = class {
+  constructor(staticCoefficient, kineticCoefficient) {
+    this.staticCoefficient = staticCoefficient;
+    this.kineticCoefficient = kineticCoefficient;
+  }
+  applyBehavior(p) {
+    if (p.isLocked) return;
+    const velocity = p.getVelocity();
+    const speed = velocity.mag();
+    if (speed === 0) return;
+    if (speed < this.staticCoefficient) {
+      p.clearVelocity();
+      return;
+    }
+    const friction = velocity.normalizeTo(-this.kineticCoefficient);
+    p.addForce(friction);
+  }
+};
+
+// src/physics/behaviors/GravitationBehavior.ts
+var EPSILON = 1e-6;
+var GravitationBehavior = class {
+  constructor(gravitationalConstant, particles) {
+    this.gravitationalConstant = gravitationalConstant;
+    this.particles = typeof particles === "function" ? particles : () => particles;
+  }
+  applyBehavior(p) {
+    if (p.isLocked) return;
+    for (const other of this.particles()) {
+      if (other === p) continue;
+      const dir = other.sub(p);
+      const distSq = Math.max(dir.magSq(), EPSILON);
+      const forceMagnitude = this.gravitationalConstant * p.mass * other.mass / distSq;
+      const force = dir.normalizeTo(forceMagnitude);
+      p.addForce(force);
+    }
+  }
+};
+
+// src/physics/behaviors/GravityBehavior.ts
+var GravityBehavior = class {
+  constructor(acc) {
+    this.acc = acc;
+  }
+  applyBehavior(p) {
+    p.addForce(this.acc.div(p.mass));
+  }
+};
+
+// src/physics/behaviors/JitterBehavior.ts
+var JitterBehavior = class {
+  constructor(maxDistance) {
+    this.maxDistance = maxDistance;
+  }
+  applyBehavior(p) {
+    if (p.isLocked) return;
+    const magnitude = Math.random() * this.maxDistance;
+    const jitter = Vec.random2D().normalizeTo(magnitude);
+    p.addForce(jitter);
+  }
+};
+
 // src/gfx/GFX.ts
 var GFX = class {
   constructor(sketch) {
@@ -783,10 +994,20 @@ var GFX = class {
   }
 };
 export {
+  AttractBehavior,
+  BounceBehavior,
   Circle,
+  ConstantForceBehavior,
+  DragBehavior,
+  FrictionBehavior,
   GFX,
+  GravitationBehavior,
+  GravityBehavior,
+  JitterBehavior,
   Line,
   Particle,
+  ParticleEmitter,
+  ParticleSink,
   PhysicsEngine,
   Rect,
   Spring,

@@ -153,9 +153,129 @@ declare class PhysicsEngine {
     update(): void;
 }
 
+type ParticleFactory = (position: Vec) => Particle;
+/**
+ * Utility for emitting new particles at a configurable rate.
+ */
+declare class ParticleEmitter {
+    position: Vec;
+    rate: number;
+    private readonly factory;
+    private accumulator;
+    isEmitting: boolean;
+    constructor(position: Vec, rate: number, factory: ParticleFactory);
+    setPosition(position: Vec): void;
+    setRate(rate: number): void;
+    emit(): Particle;
+    /**
+     * Update the emitter and emit particles into the physics engine.
+     * @param engine Target engine that receives new particles.
+     * @param deltaTime Time step multiplier (1 = one frame).
+     */
+    update(engine: PhysicsEngine, deltaTime?: number): void;
+}
+
+/**
+ * Removes particles that enter a given radius around the sink position.
+ */
+declare class ParticleSink {
+    position: Vec;
+    radius: number;
+    constructor(position: Vec, radius: number);
+    setPosition(position: Vec): void;
+    setRadius(radius: number): void;
+    contains(p: Particle): boolean;
+    absorb(engine: PhysicsEngine): void;
+}
+
 declare class SpringChain {
     particles: Particle[];
     constructor(physics: PhysicsEngine, firstParticle: Particle, dir: Vec, length: number, segmentCount: number, k: number);
+}
+
+interface Behavior {
+    applyBehavior: (p: Particle) => void;
+}
+
+/**
+ * Attracts a particle toward a target particle with an inverse-square falloff.
+ */
+declare class AttractBehavior implements Behavior {
+    private readonly target;
+    private readonly strength;
+    private readonly radiusSq;
+    private readonly minDistanceSq;
+    constructor(target: Particle, strength: number, radius?: number, minDistance?: number);
+    applyBehavior(p: Particle): void;
+}
+
+interface BounceRect {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+/**
+ * Keeps particles within a rectangular region, reflecting their velocity when they hit the bounds.
+ */
+declare class BounceBehavior implements Behavior {
+    private readonly bounds;
+    private readonly restitution;
+    constructor(bounds: BounceRect, restitution?: number);
+    applyBehavior(p: Particle): void;
+}
+
+/**
+ * Applies a constant force (or acceleration) to the particle each update.
+ */
+declare class ConstantForceBehavior implements Behavior {
+    private readonly force;
+    constructor(force: Vec);
+    applyBehavior(p: Particle): void;
+}
+
+/**
+ * Applies a quadratic drag force opposite to the particle's velocity.
+ */
+declare class DragBehavior implements Behavior {
+    private readonly coefficient;
+    constructor(coefficient: number);
+    applyBehavior(p: Particle): void;
+}
+
+/**
+ * Applies static and kinetic friction to reduce particle velocity.
+ */
+declare class FrictionBehavior implements Behavior {
+    private readonly staticCoefficient;
+    private readonly kineticCoefficient;
+    constructor(staticCoefficient: number, kineticCoefficient: number);
+    applyBehavior(p: Particle): void;
+}
+
+/**
+ * Applies pairwise Newtonian gravitation between the subject particle and a collection of other particles.
+ */
+declare class GravitationBehavior implements Behavior {
+    private readonly gravitationalConstant;
+    private readonly particles;
+    constructor(gravitationalConstant: number, particles: Iterable<Particle> | (() => Iterable<Particle>));
+    applyBehavior(p: Particle): void;
+}
+
+declare class GravityBehavior implements Behavior {
+    acc: Vec;
+    constructor(acc: Vec);
+    applyBehavior(p: Particle): void;
+}
+
+/**
+ * Applies a small random force to produce jittering motion.
+ */
+declare class JitterBehavior implements Behavior {
+    private readonly maxDistance;
+    constructor(maxDistance: number);
+    applyBehavior(p: Particle): void;
 }
 
 declare class GFX {
@@ -199,4 +319,4 @@ declare class GFX {
     }): void;
 }
 
-export { Circle, GFX, Line, Particle, PhysicsEngine, Rect, Spring, SpringChain, Vec };
+export { AttractBehavior, type Behavior, BounceBehavior, type BounceRect, Circle, ConstantForceBehavior, DragBehavior, FrictionBehavior, GFX, GravitationBehavior, GravityBehavior, JitterBehavior, Line, Particle, ParticleEmitter, type ParticleFactory, ParticleSink, PhysicsEngine, Rect, Spring, SpringChain, Vec };
