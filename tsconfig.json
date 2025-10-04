@@ -1,32 +1,53 @@
 {
 	"compilerOptions": {
-		"module": "ESNext",
-		"target": "ES2022",
-		"outDir": "./dist",
+		// "module": "ESNext",
+		// "target": "ES2022",
+		// "outDir": "./dist",
+		// "rootDir": "./src",
 
+		// "declaration": true,
+		// "declarationMap": true,
+		// "sourceMap": true,
+		// "inlineSources": true,
+
+		// "strict": true,
+		// "noUnusedLocals": true,
+		// "noUnusedParameters": true,
+		// "erasableSyntaxOnly": true,
+		// "noFallthroughCasesInSwitch": true,
+
+		// "noUncheckedIndexedAccess": true,
+		// "exactOptionalPropertyTypes": true,
+
+		// "verbatimModuleSyntax": true,
+		// "isolatedModules": true,
+		// "noUncheckedSideEffectImports": true,
+		// "moduleDetection": "force",
+		// "skipLibCheck": true,
+		// "moduleResolution": "node",
+
+		// "lib": ["ES2020", "DOM"],
+		// "esModuleInterop": true,
+		// "allowSyntheticDefaultImports": true,
+		// "forceConsistentCasingInFileNames": true,
+		// "resolveJsonModule": true,
+
+		"target": "ES2020",
+		"module": "ESNext",
+		"lib": ["ES2020", "DOM"],
 		"declaration": true,
 		"declarationMap": true,
-
-		/* Linting */
-		"strict": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"erasableSyntaxOnly": true,
-		"noFallthroughCasesInSwitch": true,
-
-		"noUncheckedIndexedAccess": true,
-		"exactOptionalPropertyTypes": true,
-
-		"verbatimModuleSyntax": true,
-		"isolatedModules": true,
-		"noUncheckedSideEffectImports": true,
-		"moduleDetection": "force",
-		"skipLibCheck": true,
-		"moduleResolution": "node",
-
-		/* Browser dev tools */
 		"sourceMap": true,
-		"inlineSources": true
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"strict": true,
+		"esModuleInterop": true,
+		"skipLibCheck": true,
+		"forceConsistentCasingInFileNames": true,
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"allowSyntheticDefaultImports": true
 	},
-	"include": ["src"]
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist"]
 }
