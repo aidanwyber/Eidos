@@ -1,1 +1,0 @@
-{"version":3,"file":"Behavior.js","sourceRoot":"","sources":["../../../src/physics/behaviors/Behavior.ts"],"names":[],"mappings":"","sourcesContent":["import type { Particle } from '../Particle';\r\n\r\nexport interface Behavior {\r\n\tapplyBehavior: (p: Particle) => void;\r\n}\r\n"]}

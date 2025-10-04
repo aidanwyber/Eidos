@@ -1,1 +1,0 @@
-{"version":3,"file":"index.js","sourceRoot":"","sources":["../../src/physics/index.ts"],"names":[],"mappings":"AAAA,cAAc,YAAY,CAAC;AAC3B,cAAc,iBAAiB,CAAC;AAChC,cAAc,UAAU,CAAC;AACzB,cAAc,eAAe,CAAC","sourcesContent":["export * from './Particle';\r\nexport * from './PhysicsEngine';\r\nexport * from './Spring';\r\nexport * from './SpringChain';\r\n"]}

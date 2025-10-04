@@ -80,6 +80,91 @@ declare class Particle extends Vec {
     addSpring(spring: Spring): void;
 }
 
+interface Behavior {
+    applyBehavior: (p: Particle) => void;
+}
+
+/**
+ * Attracts a particle toward a target particle with an inverse-square falloff.
+ */
+declare class AttractBehavior implements Behavior {
+    private readonly target;
+    private readonly strength;
+    private readonly radiusSq;
+    private readonly minDistanceSq;
+    constructor(target: Particle, strength: number, radius?: number, minDistance?: number);
+    applyBehavior(p: Particle): void;
+}
+
+interface BounceRect {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+}
+/**
+ * Keeps particles within a rectangular region, reflecting their velocity when they hit the bounds.
+ */
+declare class BounceBehavior implements Behavior {
+    private readonly bounds;
+    private readonly restitution;
+    constructor(bounds: BounceRect, restitution?: number);
+    applyBehavior(p: Particle): void;
+}
+
+/**
+ * Applies a constant force (or acceleration) to the particle each update.
+ */
+declare class ConstantForceBehavior implements Behavior {
+    private readonly force;
+    constructor(force: Vec);
+    applyBehavior(p: Particle): void;
+}
+
+/**
+ * Applies a quadratic drag force opposite to the particle's velocity.
+ */
+declare class DragBehavior implements Behavior {
+    private readonly coefficient;
+    constructor(coefficient: number);
+    applyBehavior(p: Particle): void;
+}
+
+/**
+ * Applies static and kinetic friction to reduce particle velocity.
+ */
+declare class FrictionBehavior implements Behavior {
+    private readonly staticCoefficient;
+    private readonly kineticCoefficient;
+    constructor(staticCoefficient: number, kineticCoefficient: number);
+    applyBehavior(p: Particle): void;
+}
+
+/**
+ * Applies pairwise Newtonian gravitation between the subject particle and a collection of other particles.
+ */
+declare class GravitationBehavior implements Behavior {
+    private readonly gravitationalConstant;
+    private readonly particles;
+    constructor(gravitationalConstant: number, particles: Iterable<Particle> | (() => Iterable<Particle>));
+    applyBehavior(p: Particle): void;
+}
+
+declare class GravityBehavior implements Behavior {
+    acc: Vec;
+    constructor(acc: Vec);
+    applyBehavior(p: Particle): void;
+}
+
+/**
+ * Applies a small random force to produce jittering motion.
+ */
+declare class JitterBehavior implements Behavior {
+    private readonly maxDistance;
+    constructor(maxDistance: number);
+    applyBehavior(p: Particle): void;
+}
+
 declare class Circle extends Vec {
     radius: number;
     constructor(center: Vec, radius: number);
@@ -191,91 +276,6 @@ declare class ParticleSink {
 declare class SpringChain {
     particles: Particle[];
     constructor(physics: PhysicsEngine, firstParticle: Particle, dir: Vec, length: number, segmentCount: number, k: number);
-}
-
-interface Behavior {
-    applyBehavior: (p: Particle) => void;
-}
-
-/**
- * Attracts a particle toward a target particle with an inverse-square falloff.
- */
-declare class AttractBehavior implements Behavior {
-    private readonly target;
-    private readonly strength;
-    private readonly radiusSq;
-    private readonly minDistanceSq;
-    constructor(target: Particle, strength: number, radius?: number, minDistance?: number);
-    applyBehavior(p: Particle): void;
-}
-
-interface BounceRect {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-}
-/**
- * Keeps particles within a rectangular region, reflecting their velocity when they hit the bounds.
- */
-declare class BounceBehavior implements Behavior {
-    private readonly bounds;
-    private readonly restitution;
-    constructor(bounds: BounceRect, restitution?: number);
-    applyBehavior(p: Particle): void;
-}
-
-/**
- * Applies a constant force (or acceleration) to the particle each update.
- */
-declare class ConstantForceBehavior implements Behavior {
-    private readonly force;
-    constructor(force: Vec);
-    applyBehavior(p: Particle): void;
-}
-
-/**
- * Applies a quadratic drag force opposite to the particle's velocity.
- */
-declare class DragBehavior implements Behavior {
-    private readonly coefficient;
-    constructor(coefficient: number);
-    applyBehavior(p: Particle): void;
-}
-
-/**
- * Applies static and kinetic friction to reduce particle velocity.
- */
-declare class FrictionBehavior implements Behavior {
-    private readonly staticCoefficient;
-    private readonly kineticCoefficient;
-    constructor(staticCoefficient: number, kineticCoefficient: number);
-    applyBehavior(p: Particle): void;
-}
-
-/**
- * Applies pairwise Newtonian gravitation between the subject particle and a collection of other particles.
- */
-declare class GravitationBehavior implements Behavior {
-    private readonly gravitationalConstant;
-    private readonly particles;
-    constructor(gravitationalConstant: number, particles: Iterable<Particle> | (() => Iterable<Particle>));
-    applyBehavior(p: Particle): void;
-}
-
-declare class GravityBehavior implements Behavior {
-    acc: Vec;
-    constructor(acc: Vec);
-    applyBehavior(p: Particle): void;
-}
-
-/**
- * Applies a small random force to produce jittering motion.
- */
-declare class JitterBehavior implements Behavior {
-    private readonly maxDistance;
-    constructor(maxDistance: number);
-    applyBehavior(p: Particle): void;
 }
 
 declare class GFX {

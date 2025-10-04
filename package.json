@@ -36,23 +36,23 @@
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
-			"import": "./dist/index.js",
-			"require": "./dist/index.js"
+			"require": "./dist/index.js",
+			"import": "./dist/index.js"
 		},
 		"./physics": {
 			"types": "./dist/physics/index.d.ts",
-			"import": "./dist/physics/index.js",
-			"require": "./dist/physics/index.js"
+			"require": "./dist/physics/index.js",
+			"import": "./dist/physics/index.js"
 		},
 		"./geom": {
 			"types": "./dist/geom/index.d.ts",
-			"import": "./dist/geom/index.js",
-			"require": "./dist/geom/index.js"
+			"require": "./dist/geom/index.js",
+			"import": "./dist/geom/index.js"
 		},
 		"./gfx": {
 			"types": "./dist/gfx/index.d.ts",
-			"import": "./dist/gfx/index.js",
-			"require": "./dist/gfx/index.js"
+			"require": "./dist/gfx/index.js",
+			"import": "./dist/gfx/index.js"
 		}
 	},
 	"dependencies": {
