@@ -1,4 +1,4 @@
-import p5 from 'p5';
+import type p5 from 'p5';
 import { Particle } from '../physics/Particle';
 import { Spring } from '../physics/Spring';
 import { Vec } from '../geom/Vec';
