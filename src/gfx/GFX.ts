@@ -3,12 +3,14 @@ import { Particle } from '../physics/Particle';
 import { Spring } from '../physics/Spring';
 import { Vec } from '../geom/Vec';
 
+export type P5Plus = p5 & { [key: string]: any };
+
 export class GFX {
-	private sketch: p5;
+	private sketch: P5Plus;
 	private defaultStrokeWeight: number = 1;
 	private defaultParticleSize: number = 5;
 
-	constructor(sketch: p5) {
+	constructor(sketch: P5Plus) {
 		this.sketch = sketch;
 	}
 

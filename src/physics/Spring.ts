@@ -10,7 +10,12 @@ export class Spring {
 
 	static epsilon: number = 1e-2;
 
-	constructor(a: Particle, b: Particle, restLength: number, k: number) {
+	constructor(
+		a: Particle,
+		b: Particle,
+		restLength: number | null,
+		k: number
+	) {
 		this.a = a;
 		this.b = b;
 		this.restLength = restLength === null ? a.distanceTo(b) : restLength;
