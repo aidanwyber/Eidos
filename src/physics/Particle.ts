@@ -27,6 +27,8 @@ export class Particle extends Vec implements Physical {
 	behaviors: Behavior[] = [];
 	constraints: Constraint[] = [];
 
+	positionCallback?: () => Vec;
+
 	constructor(pos: Vec, mass = 1, isLocked = false) {
 		super(pos);
 		this.prev = this.copy();
@@ -34,22 +36,6 @@ export class Particle extends Vec implements Physical {
 		this.force = new Vec(0, 0);
 		this.mass = mass;
 		this.isLocked = isLocked;
-	}
-
-	copy(): Particle {
-		const p = new Particle(
-			new Vec(this.x, this.y),
-			this.mass,
-			this.isLocked
-		);
-		p.prev = this.prev.copy();
-		p.force = this.force.copy();
-		p.radius = this.radius;
-		p.hasLifespan = this.hasLifespan;
-		p.lifespan = this.lifespan;
-		p.hasTrail = this.hasTrail;
-		p.trailLength = this.trailLength;
-		return p;
 	}
 
 	addForce(v: Vec): Particle {
@@ -86,8 +72,11 @@ export class Particle extends Vec implements Physical {
 		return this;
 	}
 
-	lock(): Particle {
+	lock(positionCallback?: () => Vec): Particle {
 		this.isLocked = true;
+		if (positionCallback) {
+			this.positionCallback = positionCallback;
+		}
 		return this;
 	}
 
@@ -161,7 +150,12 @@ export class Particle extends Vec implements Physical {
 	}
 
 	update() {
-		if (this.isLocked) return;
+		if (this.isLocked) {
+			if (this.positionCallback) {
+				this.set(this.positionCallback());
+			}
+			return;
+		}
 
 		this.applyBehaviors();
 

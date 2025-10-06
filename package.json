@@ -49,6 +49,11 @@
 			"require": "./dist/geom/index.js",
 			"import": "./dist/geom/index.js"
 		},
+		"./math": {
+			"types": "./dist/math/index.d.ts",
+			"require": "./dist/math/index.js",
+			"import": "./dist/math/index.js"
+		},
 		"./gfx": {
 			"types": "./dist/gfx/index.d.ts",
 			"require": "./dist/gfx/index.js",

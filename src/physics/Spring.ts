@@ -1,3 +1,4 @@
+import { p5 } from 'p5';
 import { Constraint } from './constraints/Constraint';
 import type { Particle } from './Particle';
 import { Physical } from './Physical';
@@ -8,7 +9,7 @@ export class Spring implements Physical {
 	restLength: number;
 	constant: number;
 
-	damping: number = 0.05;
+	// damping: number = 0.05;
 
 	static epsilon: number = 1e-2;
 
@@ -20,8 +21,9 @@ export class Spring implements Physical {
 	) {
 		this.a = a;
 		this.b = b;
-		this.restLength = restLength || a.distanceTo(b);
 		this.constant = constant;
+		this.restLength = restLength ?? a.distanceTo(b);
+		console.log('restlen', this.restLength);
 
 		a.addSpring(this);
 		b.addSpring(this);
@@ -41,22 +43,22 @@ export class Spring implements Physical {
 
 	removeConstraint(constraint: Constraint) {}
 
-	// draw() {
+	// draw(sketch: p5) {
 	// 	const n = Math.floor(this.b.distanceTo(this.a) * 0.2);
 	// 	const delta = this.b.sub(this.a).div(n);
 	// 	const deltaPerp = delta.perp();
 	// 	const zig = delta.rotate(Math.PI / 4).scale(Math.SQRT2 / 2);
-	// 	beginShape();
-	// 	vertex(this.a.x, this.a.y);
+	// 	sketch.beginShape();
+	// 	sketch.vertex(this.a.x, this.a.y);
 	// 	for (let i = 1; i <= n; i++) {
 	// 		const zigPos = this.a
 	// 			.add(delta.scale(i - 0.5))
 	// 			.add(deltaPerp.scale(i % 2 === 0 ? 1 : -1));
 	// 		const nextPos = this.a.add(delta.scale(i));
-	// 		vertex(zigPos.x, zigPos.y);
-	// 		vertex(nextPos.x, nextPos.y);
+	// 		sketch.vertex(zigPos.x, zigPos.y);
+	// 		sketch.vertex(nextPos.x, nextPos.y);
 	// 	}
-	// 	endShape();
+	// 	sketch.endShape();
 	// 	// line(this.a.x, this.a.y, this.b.x, this.b.y);
 	// }
 }

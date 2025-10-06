@@ -1,4 +1,5 @@
 import { Vec } from '../geom/Vec';
+import { Constraint } from './constraints/Constraint';
 import { Particle } from './Particle';
 import { Physical } from './Physical';
 import type { PhysicsEngine } from './PhysicsEngine';
@@ -47,4 +48,8 @@ export class ParticleEmitter implements Physical {
 			this.accumulator -= 1;
 		}
 	}
+
+	addConstraint(constraint: Constraint) {}
+
+	removeConstraint(constraint: Constraint) {}
 }

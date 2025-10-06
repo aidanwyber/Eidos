@@ -1,16 +1,24 @@
 export class Vec {
-	x: number = 0;
-	y: number = 0;
+	x: number;
+	y: number;
 
-	constructor(x: Vec | number, y?: number) {
-		if (x instanceof Vec) {
+	constructor(x: Vec);
+	constructor(x: number, y: number);
+	constructor(
+		x: Vec | { x: number; y: number; [key: string]: any } | number,
+		y?: number
+	) {
+		if (x instanceof Vec || typeof x === 'object') {
 			this.x = x.x;
 			this.y = x.y;
-			return;
+		} else {
+			this.x = x;
+			this.y = y!;
 		}
-		if (y === undefined) return;
-		this.x = x;
-		this.y = y;
+	}
+
+	copy(): Vec {
+		return new Vec(this.x, this.y);
 	}
 
 	set(x: Vec | number, y?: number): Vec {
@@ -19,9 +27,8 @@ export class Vec {
 			this.y = x.y;
 			return this;
 		}
-		if (y === undefined) return this;
 		this.x = x;
-		this.y = y;
+		this.y = y!;
 		return this;
 	}
 
@@ -98,9 +105,15 @@ export class Vec {
 		return this.sub(v).mag();
 	}
 
+	/**
+	 * Rotates 90 degrees anti-clockwise in a standard XY graph, which is clockwise in a top-left origin pixel canvas, same direction as (cos th, sin th)
+	 */
 	perp(): Vec {
 		return new Vec(-this.y, this.x);
 	}
+	/**
+	 * Rotates 90 degrees anti-clockwise in a standard XY graph, which is clockwise in a top-left origin pixel canvas, same direction as (cos th, sin th)
+	 */
 	perpSelf(): Vec {
 		this.set(this.perp());
 		return this;
@@ -133,10 +146,6 @@ export class Vec {
 
 	angle(): number {
 		return Math.atan2(this.y, this.x);
-	}
-
-	copy(): Vec {
-		return new Vec(this.x, this.y);
 	}
 
 	toString(): string {

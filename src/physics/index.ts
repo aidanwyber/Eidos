@@ -1,4 +1,7 @@
+export type * from './Physical';
+// export type * from './behaviors';
 export * from './behaviors';
+// export * from './constraints';
 export * from './Particle';
 export * from './ParticleEmitter';
 export * from './ParticleSink';

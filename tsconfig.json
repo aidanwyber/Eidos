@@ -48,7 +48,9 @@
 		"resolveJsonModule": true,
 		"allowSyntheticDefaultImports": true,
 
-		"composite": true
+		// "composite": true,
+		"types": [],
+		"maxNodeModuleJsDepth": 0 // <--- ADD THIS
 	},
 	"include": ["src/**/*"],
 	"exclude": ["node_modules", "dist"]

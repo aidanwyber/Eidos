@@ -1,4 +1,4 @@
-export * from './Behavior';
+export type * from './Behavior';
 export * from './AttractBehavior';
 export * from './BounceBehavior';
 export * from './ConstantForceBehavior';

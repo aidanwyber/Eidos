@@ -8,7 +8,6 @@ export class SpringChain implements Physical {
 	springs: Spring[];
 
 	constructor(
-		physics: PhysicsEngine,
 		firstParticle: Particle,
 		dir: Vec,
 		length: number,
@@ -20,11 +19,9 @@ export class SpringChain implements Physical {
 		const segmentVector = dir.scale(segmentLength);
 
 		let lastParticle = firstParticle;
-		physics.addParticle(firstParticle);
 		for (let i = 0; i < segmentCount; i++) {
 			let p = new Particle(lastParticle.add(segmentVector));
 			this.particles.push(p);
-			physics.addParticle(p);
 			lastParticle = p;
 		}
 

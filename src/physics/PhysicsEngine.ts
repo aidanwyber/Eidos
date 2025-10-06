@@ -58,6 +58,8 @@ export class PhysicsEngine {
 	addSpring(spring: Spring): PhysicsEngine {
 		if (this.springs.indexOf(spring) > -1) return this;
 		this.springs.push(spring);
+		this.addParticle(spring.a);
+		this.addParticle(spring.b);
 		return this;
 	}
 
