@@ -25,6 +25,10 @@ export class Vec {
 		return this;
 	}
 
+	clear() {
+		this.set(0, 0);
+	}
+
 	add(v: Vec): Vec {
 		return new Vec(this.x + v.x, this.y + v.y);
 	}

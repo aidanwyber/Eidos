@@ -1,10 +1,12 @@
+import { Constraint } from './constraints/Constraint';
 import type { Particle } from './Particle';
+import { Physical } from './Physical';
 
-export class Spring {
+export class Spring implements Physical {
 	a: Particle;
 	b: Particle;
 	restLength: number;
-	k: number; // Spring constant
+	constant: number;
 
 	damping: number = 0.05;
 
@@ -13,27 +15,31 @@ export class Spring {
 	constructor(
 		a: Particle,
 		b: Particle,
-		restLength: number | null,
-		k: number
+		constant: number,
+		restLength?: number
 	) {
 		this.a = a;
 		this.b = b;
-		this.restLength = restLength === null ? a.distanceTo(b) : restLength;
-		this.k = k;
+		this.restLength = restLength || a.distanceTo(b);
+		this.constant = constant;
 
 		a.addSpring(this);
 		b.addSpring(this);
 	}
 
-	apply() {
+	update() {
 		const diff = this.b.sub(this.a);
 		const dx = diff.mag() - this.restLength;
 		if (Math.abs(dx) > Spring.epsilon) {
-			const force = diff.normalizeTo(this.k * -dx);
+			const force = diff.normalizeTo(this.constant * -dx);
 			this.a.addForce(force.scale(-0.5));
 			this.b.addForce(force.scale(+0.5));
 		}
 	}
+
+	addConstraint(constraint: Constraint) {}
+
+	removeConstraint(constraint: Constraint) {}
 
 	// draw() {
 	// 	const n = Math.floor(this.b.distanceTo(this.a) * 0.2);

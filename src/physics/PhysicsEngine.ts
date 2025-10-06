@@ -1,193 +1,144 @@
-import { Vec } from '../geom/index';
-import { Particle, Spring, SpringChain } from './index';
+import { Rect, Vec } from '../geom/index';
+import { Constraint } from './constraints/Constraint';
+import {
+	Behavior,
+	DragBehavior,
+	GravityBehavior,
+	Particle,
+	Spring,
+	SpringChain,
+} from './index';
+import type { Physical } from './Physical';
 
 export class PhysicsEngine {
+	iters;
+	timeStep;
+
+	worldBounds: Rect | undefined;
+
 	particles: Particle[] = [];
+	behaviors: Behavior[] = [];
 
-	hasGravity = false;
-	gravity = new Vec(0, 0.1);
+	springs: Spring[] = [];
 
-	hasWind = false;
-	wind = new Vec(0.1, 0);
+	constructor(iters = 50, timeStep = 1, doDefaultSetup = true) {
+		this.iters = iters;
+		this.timeStep = timeStep;
 
-	hasFriction = false;
-	frictionCoefficient = 0.1;
+		if (!doDefaultSetup) return;
 
-	hasDrag = false;
-	dragCoefficient = 0.0;
-
-	hasBounce = false;
-	bounceCoefficient = 0.8;
-
-	hasRepulsion = false;
-	repulsionStrength = 10;
-	repulsionRadius = 10;
-
-	hasDamping = true;
-	damping = 0.01;
-
-	hasMouseInteraction = true;
-	heldParticleIndex: number | null = null;
-
-	iters = 50;
-	timeStep = 1 / this.iters;
-
-	mouse = new Vec(0, 0);
-	isMouseDown = false;
-
-	width: number;
-	height: number;
-
-	constructor(width: number, height: number) {
-		this.width = width;
-		this.height = height;
-		document.body.addEventListener('mousemove', e => {
-			this.mouse.set(e.clientX, e.clientY);
-		});
-		document.body.addEventListener('mousedown', () => {
-			this.isMouseDown = true;
-		});
-		document.body.addEventListener('mouseup', () => {
-			this.isMouseDown = false;
-		});
+		this.addBehavior(new DragBehavior(0.02));
+		this.addBehavior(new GravityBehavior(new Vec(0, -0.1)));
 	}
 
-	addParticle(p: Particle) {
-		if (this.particles.indexOf(p) > -1) return;
+	addConstraintToAll(constraint: Constraint, list: Physical[]) {
+		for (let item of list) {
+			item.addConstraint(constraint);
+		}
+	}
+
+	removeConstraintFromAll(constraint: Constraint, list: Physical[]) {
+		for (let item of list) {
+			item.removeConstraint(constraint);
+		}
+	}
+
+	addBehavior(behavior: Behavior): PhysicsEngine {
+		if (this.behaviors.indexOf(behavior) > -1) return this;
+		this.behaviors.push(behavior);
+		return this;
+	}
+
+	addParticle(p: Particle): PhysicsEngine {
+		if (this.particles.indexOf(p) > -1) return this;
 		this.particles.push(p);
+		return this;
 	}
 
-	updateParticles() {
-		// all accelerations first
-		for (let p of this.particles) {
-			if (p.isLocked) continue;
+	addSpring(spring: Spring): PhysicsEngine {
+		if (this.springs.indexOf(spring) > -1) return this;
+		this.springs.push(spring);
+		return this;
+	}
 
-			// physics properties
-			if (this.hasGravity) {
-				p.addForce(this.gravity);
-			}
+	addSpringChain(springChain: SpringChain): PhysicsEngine {
+		for (let spring of springChain.springs) {
+			this.addSpring(spring);
+		}
+		return this;
+	}
 
-			// if (this.hasWind) {
-			// 	p.addForce(this.wind);
-			// }
+	removeBehavior(behavior: Behavior): PhysicsEngine {
+		this.behaviors.splice(this.behaviors.indexOf(behavior), 1);
+		return this;
+	}
 
-			if (this.hasFriction) {
-				let friction = p.getVelocity().scale(-this.frictionCoefficient);
-				p.addForce(friction);
-			}
+	removeParticle(particle: Particle): PhysicsEngine {
+		this.particles.splice(this.particles.indexOf(particle), 1);
+		return this;
+	}
 
-			if (this.hasDrag) {
-				const vel = p.getVelocity();
-				let drag = vel.normalizeTo(-this.dragCoefficient * vel.magSq());
-				p.addForce(drag);
-			}
+	removeSpring(spring: Spring): PhysicsEngine {
+		this.springs.splice(this.springs.indexOf(spring), 1);
+		return this;
+	}
 
-			if (this.hasRepulsion) {
-				const rrSq = this.repulsionRadius * this.repulsionRadius;
-				for (let other of this.particles) {
-					if (other === p) continue;
+	clear() {
+		this.particles = [];
+		this.springs = [];
+		return this;
+	}
 
-					let dir = p.sub(other);
-					let distSq = dir.magSq();
-					if (distSq < rrSq && distSq > 0) {
-						dir.normalizeToSelf(this.repulsionStrength / distSq);
-						p.addForce(dir);
-					}
-				}
-			}
+	setWorldBounds(bounds: Rect): PhysicsEngine {
+		this.worldBounds = bounds;
+		return this;
+	}
 
-			if (
-				this.hasMouseInteraction &&
-				this.heldParticleIndex === null &&
-				this.isMouseDown
-				// && p.isHovered()
-			) {
-				this.heldParticleIndex = this.particles.indexOf(p);
-			}
-
-			// // particle properties
-			// if (p.hasLifespan) {
-			// 	p.lifespan -= 1;
-			// 	if (p.lifespan <= 0) {
-			// 		this.particles.splice(this.particles.indexOf(p), 1);
-			// 		continue;
-			// 	}
-			// }
-
-			// if (p.hasTrail) {
-			// 	p.trail.push(p.copy());
-			// 	if (p.trail.length > p.trailLength) {
-			// 		p.trail.shift();
-			// 	}
-			// }
-
-			if (p.springs !== null) {
-				for (let s of p.springs) {
-					s.apply();
-				}
+	updateParticles(): PhysicsEngine {
+		for (let behavior of this.behaviors) {
+			for (let particle of this.particles) {
+				behavior.applyBehavior(particle);
 			}
 		}
 
-		// now change positions based on accelerations
-		for (let p of this.particles) {
-			if (p.isLocked) continue;
-
-			p.force.scaleSelf(this.timeStep);
-
-			if (this.hasDamping) {
-				p.dampen(this.damping);
-			}
-
-			p.update();
-
-			if (this.hasBounce) {
-				if (p.x < p.radius) {
-					p.x = p.radius;
-					const vel = p.getVelocity();
-					p.setVelocity(
-						new Vec(vel.x * -this.bounceCoefficient, vel.y)
-					);
-				} else if (p.x >= this.width - p.radius) {
-					p.x = this.width - p.radius;
-					const vel = p.getVelocity();
-					p.setVelocity(
-						new Vec(vel.x * -this.bounceCoefficient, vel.y)
-					);
-				}
-				if (p.y < p.radius) {
-					p.y = p.radius;
-					const vel = p.getVelocity();
-					p.setVelocity(
-						new Vec(vel.x, vel.y * -this.bounceCoefficient)
-					);
-				} else if (p.y >= this.height - p.radius) {
-					p.y = this.height - p.radius;
-					const vel = p.getVelocity();
-					p.setVelocity(
-						new Vec(vel.x, vel.y * -this.bounceCoefficient)
-					);
-				}
-			}
+		for (let particle of this.particles) {
+			particle.update();
 		}
 
-		if (
-			this.hasMouseInteraction &&
-			this.heldParticleIndex !== null &&
-			this.isMouseDown
-		) {
-			const pHeld = this.particles[this.heldParticleIndex];
-			pHeld?.set(this.mouse);
-			pHeld?.clearVelocity();
-		}
+		// if (
+		// 	this.hasMouseInteraction &&
+		// 	this.heldParticleIndex !== null &&
+		// 	this.isMouseDown
+		// ) {
+		// 	const pHeld = this.particles[this.heldParticleIndex];
+		// 	pHeld?.set(this.mouse);
+		// 	pHeld?.clearVelocity();
+		// }
+		return this;
 	}
 
-	getSprings() {
-		return [];
-	}
-
-	update() {
+	updateSprings(): PhysicsEngine {
 		for (let i = 0; i < this.iters; i++) {
-			this.updateParticles();
+			for (let spring of this.springs) {
+				spring.update();
+			}
 		}
+		return this;
+	}
+
+	constrainToBounds(): PhysicsEngine {
+		if (!this.worldBounds) return this;
+
+		for (let particle of this.particles) {
+			particle.constrain(this.worldBounds);
+		}
+		return this;
+	}
+
+	update(): PhysicsEngine {
+		this.updateParticles();
+		this.updateSprings();
+		this.constrainToBounds();
+		return this;
 	}
 }

@@ -1,8 +1,11 @@
 import type { Vec } from '../geom/Vec';
+import { Constraint } from './constraints/Constraint';
 import { PhysicsEngine, Spring, Particle } from './index';
+import type { Physical } from './Physical';
 
-export class SpringChain {
+export class SpringChain implements Physical {
 	particles: Particle[];
+	springs: Spring[];
 
 	constructor(
 		physics: PhysicsEngine,
@@ -25,12 +28,17 @@ export class SpringChain {
 			lastParticle = p;
 		}
 
+		this.springs = [];
 		for (let i = 0; i < this.particles.length - 1; i++) {
 			let pi = this.particles[i] as Particle;
 			let pn = this.particles[i + 1] as Particle;
-			new Spring(pi, pn, segmentLength, k);
+			this.springs.push(new Spring(pi, pn, segmentLength, k));
 		}
 	}
+
+	addConstraint(constraint: Constraint) {}
+
+	removeConstraint(constraint: Constraint) {}
 
 	// draw() {
 	// 	beginShape();

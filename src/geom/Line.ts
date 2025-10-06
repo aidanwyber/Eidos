@@ -10,6 +10,16 @@ export class Line {
 		this.b = b;
 	}
 
+	copy() {
+		return new Line(this.a.copy(), this.b.copy());
+	}
+
+	set(a: Vec, b: Vec): Line {
+		this.a = a;
+		this.b = b;
+		return this;
+	}
+
 	getHeading() {
 		return this.b.sub(this.a);
 	}
@@ -26,8 +36,16 @@ export class Line {
 		return this.a.lerp(this.b, 0.5);
 	}
 
-	copy() {
-		return new Line(this.a.copy(), this.b.copy());
+	closestPointTo(point: Vec) {
+		const v = this.b.sub(this.a);
+		const t = point.sub(this.a).dot(v) / v.magSq();
+		// Check to see if t is beyond the extents of the line segment
+		if (t < 0.0) {
+			return this.a.copy();
+		} else if (t > 1.0) {
+			return this.b.copy();
+		}
+		return this.a.add(v.scaleSelf(t));
 	}
 
 	toString() {
