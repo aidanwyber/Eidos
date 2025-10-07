@@ -25,8 +25,10 @@ export class Spring implements PhysicalObject {
 		b.addSpring(this);
 	}
 
+	/**
+	 * spring dynamics from toxiclibsjs
+	 */
 	update(doApplyConstraints: boolean) {
-		// spring dynamics from toxiclibsjs
 		const diff = this.b.sub(this.a);
 		// add minute offset to avoid div-by-zero errors
 		const dist = diff.mag() + Spring.EPSILON;

@@ -31,19 +31,20 @@ export class Particle extends Vec implements PhysicalObject {
 
 	positionCallback?: () => Vec;
 
-	constructor(pos: Vec, radius = 10, mass = 1, isLocked = false) {
+	constructor(pos: Vec, radius?: number, mass = 1, isLocked = false) {
 		super(pos);
 		this.prev = this.copy();
 		this.temp = new Vec(0, 0);
 		this.force = new Vec(0, 0);
+		this.radius = radius ?? 10;
+		// this.setMass(Math.pow(this.radius, 2) * 0.1);
 		this.setMass(mass);
-		this.radius = radius;
 		this.isLocked = isLocked;
 	}
 
 	setMass(m: number) {
 		this.mass = m;
-		this.inverseMass = 1 / m;
+		this.inverseMass = this.mass !== 0 ? 1 / this.mass : 0;
 	}
 
 	addForce(v: Vec): Particle {
@@ -150,10 +151,7 @@ export class Particle extends Vec implements PhysicalObject {
 
 		this.temp.set(this);
 
-		// const acc = this.force.scale(this.mass);
-		// const vel = this.sub(this.prev).add(acc);
-		// this.addSelf(vel);
-		this.addSelf(this.sub(this.prev).addSelf(this.force.scale(this.mass)));
+		this.addSelf(this.sub(this.prev).add(this.force.scale(this.mass)));
 
 		this.prev.set(this.temp);
 		this.clearForce();

@@ -12,7 +12,7 @@ export class SpringChain implements PhysicalObject {
 		dir: Vec,
 		length: number,
 		segmentCount: number,
-		k: number
+		totalStrength: number
 	) {
 		this.particles = [firstParticle];
 		const segmentLength = length / segmentCount;
@@ -26,10 +26,11 @@ export class SpringChain implements PhysicalObject {
 		}
 
 		this.springs = [];
+		const segmentStrength = totalStrength * segmentCount;
 		for (let i = 0; i < this.particles.length - 1; i++) {
-			let pi = this.particles[i] as Particle;
-			let pn = this.particles[i + 1] as Particle;
-			this.springs.push(new Spring(pi, pn, k));
+			let pi = this.particles[i];
+			let pn = this.particles[i + 1];
+			this.springs.push(new Spring(pi, pn, segmentStrength));
 		}
 	}
 
