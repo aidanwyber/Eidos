@@ -78,6 +78,11 @@ export class Rect {
 		);
 	}
 
+	shrink(inset: number) {
+		const insetVec = new Vec(inset, inset);
+		return new Rect(this.a.add(insetVec), this.b.sub(insetVec));
+	}
+
 	union(other: Rect): Rect {
 		const x1 = Math.min(this.a.x, other.a.x);
 		const y1 = Math.min(this.a.y, other.a.y);

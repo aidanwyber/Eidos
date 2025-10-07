@@ -1,41 +1,47 @@
-import { p5 } from 'p5';
 import { Constraint } from './constraints/Constraint';
 import type { Particle } from './Particle';
-import { Physical } from './Physical';
+import { PhysicalObject } from './Physical';
 
-export class Spring implements Physical {
+export class Spring implements PhysicalObject {
 	a: Particle;
 	b: Particle;
 	restLength: number;
-	constant: number;
+	strength: number;
 
-	// damping: number = 0.05;
-
-	static epsilon: number = 1e-2;
+	static EPSILON: number = 1e-6;
 
 	constructor(
 		a: Particle,
 		b: Particle,
-		constant: number,
+		strength: number,
 		restLength?: number
 	) {
 		this.a = a;
 		this.b = b;
-		this.constant = constant;
+		this.strength = strength;
 		this.restLength = restLength ?? a.distanceTo(b);
-		console.log('restlen', this.restLength);
 
 		a.addSpring(this);
 		b.addSpring(this);
 	}
 
-	update() {
+	update(doApplyConstraints: boolean) {
+		// spring dynamics from toxiclibsjs
 		const diff = this.b.sub(this.a);
-		const dx = diff.mag() - this.restLength;
-		if (Math.abs(dx) > Spring.epsilon) {
-			const force = diff.normalizeTo(this.constant * -dx);
-			this.a.addForce(force.scale(-0.5));
-			this.b.addForce(force.scale(+0.5));
+		// add minute offset to avoid div-by-zero errors
+		const dist = diff.mag() + Spring.EPSILON;
+		const normDistStrength =
+			((dist - this.restLength) /
+				(dist * (this.a.inverseMass + this.b.inverseMass))) *
+			this.strength;
+
+		if (!this.a.isLocked) {
+			this.a.addSelf(diff.scale(normDistStrength * this.a.inverseMass));
+			if (doApplyConstraints) this.a.applyConstraints();
+		}
+		if (!this.b.isLocked) {
+			this.b.addSelf(diff.scale(-normDistStrength * this.b.inverseMass));
+			if (doApplyConstraints) this.b.applyConstraints();
 		}
 	}
 

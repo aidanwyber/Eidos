@@ -8,18 +8,18 @@ import {
 	Spring,
 	SpringChain,
 } from './index';
-import type { Physical } from './Physical';
+import type { PhysicalObject } from './Physical';
 
 export class PhysicsEngine {
 	iters;
 	timeStep;
 
-	worldBounds: Rect | undefined;
-
 	particles: Particle[] = [];
 	behaviors: Behavior[] = [];
 
 	springs: Spring[] = [];
+
+	worldBounds?: Rect;
 
 	constructor(iters = 50, timeStep = 1, doDefaultSetup = true) {
 		this.iters = iters;
@@ -31,13 +31,13 @@ export class PhysicsEngine {
 		this.addBehavior(new GravityBehavior(new Vec(0, -0.1)));
 	}
 
-	addConstraintToAll(constraint: Constraint, list: Physical[]) {
+	addConstraintToAll(constraint: Constraint, list: PhysicalObject[]) {
 		for (let item of list) {
 			item.addConstraint(constraint);
 		}
 	}
 
-	removeConstraintFromAll(constraint: Constraint, list: Physical[]) {
+	removeConstraintFromAll(constraint: Constraint, list: PhysicalObject[]) {
 		for (let item of list) {
 			item.removeConstraint(constraint);
 		}
@@ -96,7 +96,13 @@ export class PhysicsEngine {
 		return this;
 	}
 
-	updateParticles(): PhysicsEngine {
+	update(): void {
+		this.updateParticles();
+		this.updateSprings();
+		this.constrainToBounds();
+	}
+
+	updateParticles(): void {
 		for (let behavior of this.behaviors) {
 			for (let particle of this.particles) {
 				behavior.applyBehavior(particle);
@@ -116,31 +122,23 @@ export class PhysicsEngine {
 		// 	pHeld?.set(this.mouse);
 		// 	pHeld?.clearVelocity();
 		// }
-		return this;
 	}
 
-	updateSprings(): PhysicsEngine {
+	updateSprings(): void {
 		for (let i = 0; i < this.iters; i++) {
+			const doApplyConstraints = i === this.iters - 1;
+
 			for (let spring of this.springs) {
-				spring.update();
+				spring.update(doApplyConstraints);
 			}
 		}
-		return this;
 	}
 
-	constrainToBounds(): PhysicsEngine {
-		if (!this.worldBounds) return this;
+	constrainToBounds(): void {
+		if (!this.worldBounds) return;
 
 		for (let particle of this.particles) {
-			particle.constrain(this.worldBounds);
+			particle.constrainSelf(this.worldBounds.shrink(particle.radius));
 		}
-		return this;
-	}
-
-	update(): PhysicsEngine {
-		this.updateParticles();
-		this.updateSprings();
-		this.constrainToBounds();
-		return this;
 	}
 }

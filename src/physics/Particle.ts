@@ -2,16 +2,18 @@ import { Rect } from '../geom';
 import { Vec } from '../geom/Vec';
 import type { Behavior } from './behaviors';
 import type { Constraint } from './constraints/Constraint';
-import type { Physical } from './Physical';
+import type { PhysicalObject } from './Physical';
 import type { Spring } from './Spring';
 
-export class Particle extends Vec implements Physical {
+export class Particle extends Vec implements PhysicalObject {
 	prev: Vec;
 	temp: Vec;
 	force: Vec;
 
-	mass: number;
-	radius: number = 10;
+	mass!: number;
+	inverseMass!: number;
+
+	radius: number;
 
 	isLocked: boolean;
 
@@ -29,13 +31,19 @@ export class Particle extends Vec implements Physical {
 
 	positionCallback?: () => Vec;
 
-	constructor(pos: Vec, mass = 1, isLocked = false) {
+	constructor(pos: Vec, radius = 10, mass = 1, isLocked = false) {
 		super(pos);
 		this.prev = this.copy();
 		this.temp = new Vec(0, 0);
 		this.force = new Vec(0, 0);
-		this.mass = mass;
+		this.setMass(mass);
+		this.radius = radius;
 		this.isLocked = isLocked;
+	}
+
+	setMass(m: number) {
+		this.mass = m;
+		this.inverseMass = 1 / m;
 	}
 
 	addForce(v: Vec): Particle {
@@ -130,25 +138,6 @@ export class Particle extends Vec implements Physical {
 		return this;
 	}
 
-	constrain(bounds: Rect) {
-		if (this.x < bounds.a.x + this.radius) {
-			this.x = bounds.a.x + this.radius;
-			this.setVelocity(new Vec(0, this.getVelocity().y));
-		}
-		if (this.x > bounds.b.x - this.radius) {
-			this.x = bounds.b.x - this.radius;
-			this.setVelocity(new Vec(0, this.getVelocity().y));
-		}
-		if (this.y < bounds.a.y + this.radius) {
-			this.y = bounds.a.y + this.radius;
-			this.setVelocity(new Vec(this.getVelocity().x, 0));
-		}
-		if (this.y > bounds.b.y - this.radius) {
-			this.y = bounds.b.y - this.radius;
-			this.setVelocity(new Vec(this.getVelocity().x, 0));
-		}
-	}
-
 	update() {
 		if (this.isLocked) {
 			if (this.positionCallback) {
@@ -160,7 +149,12 @@ export class Particle extends Vec implements Physical {
 		this.applyBehaviors();
 
 		this.temp.set(this);
+
+		// const acc = this.force.scale(this.mass);
+		// const vel = this.sub(this.prev).add(acc);
+		// this.addSelf(vel);
 		this.addSelf(this.sub(this.prev).addSelf(this.force.scale(this.mass)));
+
 		this.prev.set(this.temp);
 		this.clearForce();
 

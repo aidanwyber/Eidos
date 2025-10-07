@@ -1,7 +1,7 @@
 import { Vec } from '../geom/Vec';
 import { Constraint } from './constraints/Constraint';
 import { Particle } from './Particle';
-import { Physical } from './Physical';
+import { PhysicalObject } from './Physical';
 import type { PhysicsEngine } from './PhysicsEngine';
 
 export type ParticleFactory = (position: Vec) => Particle;
@@ -9,7 +9,7 @@ export type ParticleFactory = (position: Vec) => Particle;
 /**
  * Utility for emitting new particles at a configurable rate.
  */
-export class ParticleEmitter implements Physical {
+export class ParticleEmitter implements PhysicalObject {
 	position: Vec;
 	rate: number;
 	private readonly factory: ParticleFactory;

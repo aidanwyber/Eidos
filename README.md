@@ -1,6 +1,8 @@
 # Eidos
 
-Eidos is a TypeScript toolkit for building creative-coding sketches with p5.js. It combines a lightweight geometry core, a Verlet-based physics engine inspired by [toxiclibsjs](https://github.com/hapticdata/toxiclibsjs), and rendering helpers so you can prototype interactive systems without re-implementing the basics every time.
+⚠️ Construction still in progress!
+
+Eidos is a TypeScript toolkit for building creative-coding sketches with p5.js. It provides geometry utilities and a physics engine that builds directly on [toxiclibsjs](https://github.com/hapticdata/toxiclibsjs), extending its Verlet physics system with modern TypeScript typing and p5.js rendering helpers.
 
 Eidos (εἶδος) refers to Plato's form, an idea with a functional structure.
 
@@ -11,20 +13,21 @@ Eidos (εἶδος) refers to Plato's form, an idea with a functional structure.
 -   `Vec` for 2D vector math with both pure and mutating helpers.
 -   `Circle`, `Line`, and `Rect` types with distance and intersection utilities.
 
-### Physics system
+### Physics system (powered by toxiclibsjs)
 
--   `PhysicsEngine` orchestrates particles with configurable gravity, friction, drag, damping, repulsion, mouse interaction, and boundary bouncing.
--   `Particle` implements Verlet integration with force accumulation, locking, and spring registration.
--   Structural helpers including `Spring`, `SpringChain`, `ParticleEmitter`, and `ParticleSink`.
--   Behavior interfaces (`AttractBehavior`, `BounceBehavior`, `DragBehavior`, `FrictionBehavior`, `GravityBehavior`, `GravitationBehavior`, `JitterBehavior`, `ConstantForceBehavior`) for layering additional forces.
+-   `PhysicsEngine` extends toxiclibsjs's VerletPhysics2D with additional features like configurable gravity, friction, drag, damping, repulsion, and mouse interaction
+-   `Particle` builds on toxiclibsjs's VerletParticle2D implementation with enhanced TypeScript typing
+-   Structural components including `Spring`, `SpringChain`, `ParticleEmitter`, and `ParticleSink`
+-   Behavior system (`AttractBehavior`, `BounceBehavior`, `DragBehavior`, etc.) derived from toxiclibsjs's behavior pipeline
 
 ### Graphics helpers
 
--   `GFX` wraps a p5 instance and offers particle/spring rendering, vector arrows, polygons, curves, grids, and text helpers with overloads for both vectors and raw coordinates.
+-   `GFX` provides a typed wrapper around p5.js for rendering particles, springs, vectors, and common geometric primitives
+-   Includes helper methods for arrows, polygons, curves, grids, and text with both vector and coordinate-based overloads
 
 ## Installation
 
-To use Eidos in your own project:
+<del>To use Eidos in your own project:</del>
 
 ```bash
 npm install eidos p5
@@ -75,14 +78,18 @@ new p5(sketch => {
 
 ## Additional examples
 
-More focused sketches demonstrating emitters, chains, and behaviours live in the [`examples/`](examples) directory. Each example imports from the published entry points (`eidos`, `eidos/physics`, etc.) and can be adapted into your own tooling or bundler setup.
+Check out the [`examples/`](examples) directory for focused demonstrations of the physics system, including particle emitters, spring chains, and various behaviors. Each example imports from the published package and can be adapted for your preferred build setup.
+
+## Credits
+
+The physics system in Eidos is a direct TypeScript adaptation of [toxiclibsjs](https://github.com/hapticdata/toxiclibsjs) by Kyle Phillips, which itself is based on Karsten Schmidt's original [toxiclibs](http://toxiclibs.org/) for Processing. We're grateful to both projects for establishing the robust foundation that Eidos builds upon.
 
 ## Building the package
 
-The build output is generated with [`tsup`](https://tsup.egoist.dev). Regenerate the distributable files after making changes:
+The build output is generated with [`tsup`](https://tsup.egoist.dev). To regenerate the distributable files:
 
 ```bash
 npm run build
 ```
 
-This command produces CommonJS, ESM, and TypeScript declaration bundles inside `dist/` that align with the `package.json` exports map.
+This produces CommonJS, ESM, and TypeScript declaration bundles in `dist/` that align with the `package.json` exports map.

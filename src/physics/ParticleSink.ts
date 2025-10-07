@@ -1,13 +1,13 @@
 import { Vec } from '../geom/Vec';
 import { Constraint } from './constraints/Constraint';
 import type { Particle } from './Particle';
-import { Physical } from './Physical';
+import { PhysicalObject } from './Physical';
 import type { PhysicsEngine } from './PhysicsEngine';
 
 /**
  * Removes particles that enter a given radius around the sink position.
  */
-export class ParticleSink implements Physical {
+export class ParticleSink implements PhysicalObject {
 	position: Vec;
 	radius: number;
 

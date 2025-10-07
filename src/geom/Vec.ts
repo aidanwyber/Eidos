@@ -1,3 +1,5 @@
+import { Rect } from './Rect';
+
 export class Vec {
 	x: number;
 	y: number;
@@ -129,6 +131,26 @@ export class Vec {
 	}
 	rotateSelf(theta: number): Vec {
 		this.set(this.rotate(theta));
+		return this;
+	}
+
+	constrain(bounds: Rect): Vec {
+		if (this.x < bounds.a.x) {
+			return new Vec(bounds.a.x, this.y);
+		}
+		if (this.x > bounds.b.x) {
+			return new Vec(bounds.b.x, this.y);
+		}
+		if (this.y < bounds.a.y) {
+			return new Vec(this.x, bounds.a.y);
+		}
+		if (this.y > bounds.b.y) {
+			return new Vec(this.x, bounds.b.y);
+		}
+		return this.copy();
+	}
+	constrainSelf(bounds: Rect): Vec {
+		this.set(this.constrain(bounds));
 		return this;
 	}
 
