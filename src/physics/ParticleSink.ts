@@ -1,44 +1,28 @@
 import { Vec } from '../geom/Vec';
-import { Constraint } from './constraints/Constraint';
-import type { Particle } from './Particle';
-import { PhysicalObject } from './Physical';
+import { Particle } from './Particle';
 import type { PhysicsEngine } from './PhysicsEngine';
 
 /**
  * Removes particles that enter a given radius around the sink position.
  */
-export class ParticleSink implements PhysicalObject {
-	position: Vec;
-	radius: number;
+export class ParticleSink extends Particle {
+	physics: PhysicsEngine;
+	isAbsorbing = true;
 
-	constructor(position: Vec, radius: number) {
-		this.position = new Vec(position);
-		this.radius = radius;
+	constructor(physics: PhysicsEngine, position: Vec, radius: number) {
+		super(position, radius);
+		this.physics = physics;
+		this.lock();
 	}
 
-	setPosition(position: Vec): void {
-		this.position.set(position);
-	}
-
-	setRadius(radius: number): void {
-		this.radius = radius;
-	}
-
-	contains(p: Particle): boolean {
-		return p.distanceToSq(this.position) <= this.radius * this.radius;
-	}
-
-	absorb(engine: PhysicsEngine): void {
+	absorb(): void {
+		if (!this.isAbsorbing) return;
 		const remaining: Particle[] = [];
-		for (const particle of engine.particles) {
-			if (!this.contains(particle)) {
+		for (const particle of this.physics.particles) {
+			if (!this.isIntersecting(particle)) {
 				remaining.push(particle);
 			}
 		}
-		engine.particles = remaining;
+		this.physics.particles = remaining;
 	}
-
-	addConstraint(constraint: Constraint) {}
-
-	removeConstraint(constraint: Constraint) {}
 }

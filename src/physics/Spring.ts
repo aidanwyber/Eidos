@@ -1,12 +1,14 @@
 import { Constraint } from './constraints/Constraint';
 import type { Particle } from './Particle';
-import { PhysicalObject } from './Physical';
+import { PhysicalObject } from './PhysicalObject';
 
 export class Spring implements PhysicalObject {
 	a: Particle;
 	b: Particle;
 	restLength: number;
 	strength: number;
+
+	constraints: Constraint[] = [];
 
 	static EPSILON: number = 1e-6;
 
@@ -47,9 +49,20 @@ export class Spring implements PhysicalObject {
 		}
 	}
 
-	addConstraint(constraint: Constraint) {}
+	addConstraint(constraint: Constraint): Spring {
+		this.constraints.push(constraint);
+		return this;
+	}
 
-	removeConstraint(constraint: Constraint) {}
+	removeConstraint(constraint: Constraint): Spring {
+		this.constraints.splice(this.constraints.indexOf(constraint), 1);
+		return this;
+	}
+
+	clearConstraints(): Spring {
+		this.constraints = [];
+		return this;
+	}
 
 	// draw(sketch: p5) {
 	// 	const n = Math.floor(this.b.distanceTo(this.a) * 0.2);

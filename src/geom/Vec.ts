@@ -162,6 +162,10 @@ export class Vec {
 		return this;
 	}
 
+	midPointTo(v: Vec): Vec {
+		return this.lerp(v, 0.5);
+	}
+
 	angleTo(v: Vec): number {
 		return Vec.angleBetween(this, v);
 	}

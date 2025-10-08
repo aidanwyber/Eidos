@@ -1,11 +1,13 @@
 import type { Vec } from '../geom/Vec';
 import { Constraint } from './constraints/Constraint';
 import { PhysicsEngine, Spring, Particle } from './index';
-import type { PhysicalObject } from './Physical';
+import type { PhysicalObject } from './PhysicalObject';
 
 export class SpringChain implements PhysicalObject {
 	particles: Particle[];
 	springs: Spring[];
+
+	constraints: Constraint[] = [];
 
 	constructor(
 		firstParticle: Particle,
@@ -34,9 +36,20 @@ export class SpringChain implements PhysicalObject {
 		}
 	}
 
-	addConstraint(constraint: Constraint) {}
+	addConstraint(constraint: Constraint): SpringChain {
+		this.constraints.push(constraint);
+		return this;
+	}
 
-	removeConstraint(constraint: Constraint) {}
+	removeConstraint(constraint: Constraint): SpringChain {
+		this.constraints.splice(this.constraints.indexOf(constraint), 1);
+		return this;
+	}
+
+	clearConstraints(): SpringChain {
+		this.constraints = [];
+		return this;
+	}
 
 	// draw() {
 	// 	beginShape();

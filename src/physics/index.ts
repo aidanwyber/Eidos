@@ -1,4 +1,4 @@
-export type * from './Physical';
+export type * from './PhysicalObject';
 // export type * from './behaviors';
 export * from './behaviors';
 // export * from './constraints';

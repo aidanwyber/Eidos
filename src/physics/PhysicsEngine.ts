@@ -8,7 +8,7 @@ import {
 	Spring,
 	SpringChain,
 } from './index';
-import type { PhysicalObject } from './Physical';
+import type { PhysicalObject } from './PhysicalObject';
 
 export class PhysicsEngine {
 	iters;

@@ -2,7 +2,7 @@ import { Rect } from '../geom';
 import { Vec } from '../geom/Vec';
 import type { Behavior } from './behaviors';
 import type { Constraint } from './constraints/Constraint';
-import type { PhysicalObject } from './Physical';
+import type { PhysicalObject } from './PhysicalObject';
 import type { Spring } from './Spring';
 
 export class Particle extends Vec implements PhysicalObject {
@@ -100,11 +100,6 @@ export class Particle extends Vec implements PhysicalObject {
 		return this;
 	}
 
-	addConstraint(constraint: Constraint): Particle {
-		this.constraints.push(constraint);
-		return this;
-	}
-
 	applyBehaviors(): Particle {
 		for (let behavior of this.behaviors) {
 			behavior.applyBehavior(this);
@@ -134,9 +129,23 @@ export class Particle extends Vec implements PhysicalObject {
 		return this;
 	}
 
+	addConstraint(constraint: Constraint): Particle {
+		this.constraints.push(constraint);
+		return this;
+	}
+
 	removeConstraint(constraint: Constraint): Particle {
 		this.constraints.splice(this.constraints.indexOf(constraint), 1);
 		return this;
+	}
+
+	clearConstraints(): Particle {
+		this.constraints = [];
+		return this;
+	}
+
+	isIntersecting(p: Particle): boolean {
+		return p.distanceToSq(this) <= this.radius * this.radius;
 	}
 
 	update() {
