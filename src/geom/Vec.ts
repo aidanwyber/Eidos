@@ -82,7 +82,7 @@ export class Vec {
 
 	normalize(): Vec {
 		let m = this.mag();
-		if (m > Vec.epsilon) {
+		if (m > Vec.EPSILON) {
 			return this.scale(1 / m);
 		}
 		return new Vec(0, 0);
@@ -190,7 +190,11 @@ export class Vec {
 		return this;
 	}
 
-	static epsilon = 1e-4;
+	equals(v: Vec) {
+		return this.sub(v).magSq() < Vec.EPSILON;
+	}
+
+	static EPSILON = 1e-5;
 
 	static random2D(): Vec {
 		let angle = Math.random() * Math.PI * 2;
