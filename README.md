@@ -2,9 +2,9 @@
 
 ⚠️ Construction still in progress!
 
-Eidos is a TypeScript toolkit for building creative-coding sketches with p5.js. It provides geometry utilities and a physics engine that builds directly on [toxiclibsjs](https://github.com/hapticdata/toxiclibsjs), extending its Verlet physics system with modern TypeScript typing and p5.js rendering helpers.
+Eidos is a JavaScript & TypeScript library for creative-coding with p5.js. It provides geometry utilities and a physics engine that built on the foundations of [toxiclibsjs](https://github.com/hapticdata/toxiclibsjs), modified and extended for modern TypeScript. At the core is a Verlet physics system with p5.js rendering helpers.
 
-Eidos (εἶδος) refers to Plato's form, an idea with a functional structure.
+Eidos refers to Plato's form (εἶδος), an idea with a functional structure. Isn't that exactly what a simulation is?
 
 ## Features
 
