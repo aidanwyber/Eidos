@@ -3,6 +3,7 @@ export * from './AttractBehavior';
 export * from './BounceBehavior';
 export * from './ConstantForceBehavior';
 export * from './DragBehavior';
+export * from './DynamicForceBehavior';
 export * from './FrictionBehavior';
 export * from './GravitationBehavior';
 export * from './GravityBehavior';

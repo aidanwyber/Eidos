@@ -51,6 +51,14 @@ export class SpringChain implements PhysicalObject {
 		return this;
 	}
 
+	get firstParticle(): Particle {
+		return this.particles[0];
+	}
+
+	get lastParticle(): Particle {
+		return this.particles[this.particles.length - 1];
+	}
+
 	// draw() {
 	// 	beginShape();
 	// 	for (let p of this.particles) {
