@@ -85,6 +85,13 @@ export class PhysicsEngine {
 		return this;
 	}
 
+	removeSpringChain(springChain: SpringChain): PhysicsEngine {
+		for (let spring of springChain.springs) this.removeSpring(spring);
+		for (let particle of springChain.particles)
+			this.removeParticle(particle);
+		return this;
+	}
+
 	clear() {
 		this.particles = [];
 		this.springs = [];
