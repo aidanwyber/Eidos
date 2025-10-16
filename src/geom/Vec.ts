@@ -1,6 +1,7 @@
+import { Renderable, Renderer } from '../types/Renderer';
 import { Rect } from './Rect';
 
-export class Vec {
+export class Vec implements Renderable {
 	x: number;
 	y: number;
 
@@ -105,6 +106,13 @@ export class Vec {
 	}
 	distanceTo(v: Vec) {
 		return this.sub(v).mag();
+	}
+
+	draw(renderer: Renderer) {
+		this.drawCircle(renderer, 3);
+	}
+	drawCircle(renderer: Renderer, diameter: number) {
+		renderer.ellipse(this.x, this.y, diameter, diameter);
 	}
 
 	/**

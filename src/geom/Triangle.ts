@@ -1,7 +1,8 @@
+import { Renderable, Renderer } from '../types/Renderer';
 import { Line } from './Line';
 import { Vec } from './Vec';
 
-export class Triangle {
+export class Triangle implements Renderable {
 	a: Vec;
 	b: Vec;
 	c: Vec;
@@ -52,5 +53,16 @@ export class Triangle {
 			result = Rca;
 		}
 		return result;
+	}
+
+	draw(renderer: Renderer) {
+		renderer.triangle(
+			this.a.x,
+			this.a.y,
+			this.b.x,
+			this.b.y,
+			this.c.x,
+			this.c.y
+		);
 	}
 }

@@ -1,6 +1,7 @@
+import { Renderable, Renderer } from '../types/Renderer';
 import { Vec } from './Vec';
 
-export class Circle extends Vec {
+export class Circle extends Vec implements Renderable {
 	radius: number;
 
 	constructor(center: Vec, radius: number) {
@@ -14,5 +15,9 @@ export class Circle extends Vec {
 
 	distanceToCircle(c: Circle): number {
 		return this.distanceTo(c) - this.radius - c.radius;
+	}
+
+	draw(renderer: Renderer) {
+		renderer.ellipse(this.x, this.y, this.radius * 2, this.radius * 2);
 	}
 }

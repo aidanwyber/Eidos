@@ -1,7 +1,8 @@
 import { Vec } from './Vec';
 import { Circle } from './Circle';
+import { Renderable, Renderer } from '../types/Renderer';
 
-export class Line {
+export class Line implements Renderable {
 	a: Vec;
 	b: Vec;
 
@@ -94,6 +95,10 @@ export class Line {
 			intersections.push(this.a.add(d.scale(t2)));
 		}
 		return intersections;
+	}
+
+	draw(renderer: Renderer) {
+		renderer.line(this.a.x, this.a.y, this.b.x, this.b.y);
 	}
 
 	static fromAngleLength(

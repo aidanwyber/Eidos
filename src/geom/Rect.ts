@@ -1,6 +1,7 @@
+import { Renderable, Renderer } from '../types/Renderer';
 import { Vec } from './Vec';
 
-export class Rect {
+export class Rect implements Renderable {
 	public a: Vec; // top-left
 	public b: Vec; // bottom-right
 
@@ -101,5 +102,9 @@ export class Rect {
 			return new Rect(new Vec(x1, y1), new Vec(x2, y2));
 		}
 		return null;
+	}
+
+	draw(renderer: Renderer) {
+		renderer.rect(this.x, this.y, this.width, this.height);
 	}
 }
