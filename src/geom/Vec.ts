@@ -1,4 +1,5 @@
-import { Renderable, Renderer } from '../types/Renderer';
+import { Renderer } from '../types/Renderer';
+import { Renderable } from '../types/Renderable';
 import { Rect } from './Rect';
 
 export class Vec implements Renderable {

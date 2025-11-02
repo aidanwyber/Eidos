@@ -1,4 +1,5 @@
-import { Renderer, Renderable } from '../types/Renderer';
+import { Renderer } from '../types/Renderer';
+import { Renderable } from '../types/Renderable';
 import { Vec } from './Vec';
 
 /**

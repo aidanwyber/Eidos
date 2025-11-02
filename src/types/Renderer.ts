@@ -103,8 +103,3 @@ export interface Renderer {
 
 	blendMode?(mode: string): void;
 }
-
-export interface Renderable {
-	draw: (renderer: Renderer) => void;
-	// draw: (renderer: Renderer, ...args: any[]) => void;
-}

@@ -1,6 +1,7 @@
 import { Vec } from './Vec';
 import { Circle } from './Circle';
-import { Renderable, Renderer } from '../types/Renderer';
+import { Renderer } from '../types/Renderer';
+import { Renderable } from '../types/Renderable';
 
 export class Line implements Renderable {
 	a: Vec;
