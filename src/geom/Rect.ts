@@ -108,4 +108,23 @@ export class Rect implements Renderable {
 	draw(renderer: Renderer) {
 		renderer.rect(this.x, this.y, this.width, this.height);
 	}
+
+	static boundingRect(points: Vec[]): Rect {
+		if (points.length === 0) {
+			throw new Error(
+				'Cannot compute bounding rect of empty point array'
+			);
+		}
+		let minX = points[0].x;
+		let minY = points[0].y;
+		let maxX = points[0].x;
+		let maxY = points[0].y;
+		for (let p of points) {
+			if (p.x < minX) minX = p.x;
+			if (p.y < minY) minY = p.y;
+			if (p.x > maxX) maxX = p.x;
+			if (p.y > maxY) maxY = p.y;
+		}
+		return new Rect(minX, minY, maxX - minX, maxY - minY);
+	}
 }
