@@ -39,9 +39,17 @@ export class Ellipse implements Renderable {
 			this.center = a.midPointTo(b);
 			this.focalLength = a.distanceTo(b);
 			this.majorAxis = majorLength;
+			if (this.focalLength > this.majorAxis)
+				throw new Error(
+					'Focal length cannot be greater than major axis'
+				);
 			this.minorAxis = Math.sqrt(
 				Math.pow(majorLength, 2) - Math.pow(this.focalLength, 2)
 			);
+			if (this.majorAxis < this.minorAxis)
+				throw new Error(
+					'Major axis must be greater than or equal to minor axis'
+				);
 			this.rotation = b.sub(a).angle();
 		} else if (
 			args.length === 3 &&
@@ -119,11 +127,12 @@ export class Ellipse implements Renderable {
 		return new Ellipse(this.a, this.b, this.majorAxis);
 	}
 
-	draw(renderer: Renderer) {
+	draw(renderer: Renderer, scale?: number) {
+		const sc = scale ?? 1;
 		renderer.push();
 		renderer.translate(this.center.x, this.center.y);
 		renderer.rotate(this.rotation);
-		renderer.ellipse(0, 0, this.majorAxis, this.minorAxis);
+		renderer.ellipse(0, 0, this.majorAxis * sc, this.minorAxis * sc);
 		renderer.pop();
 	}
 
