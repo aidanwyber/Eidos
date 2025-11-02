@@ -42,8 +42,8 @@ export interface Renderer {
 		y4: number
 	): void;
 
-	beginShape(kind?: number): void;
-	endShape(mode?: number): void;
+	beginShape(kind?: string): void;
+	endShape(mode?: string): void;
 	vertex(x: number, y: number): void;
 	curveVertex(x: number, y: number): void;
 	bezierVertex(
@@ -55,6 +55,8 @@ export interface Renderer {
 		y4: number
 	): void;
 	quadraticVertex(cx: number, cy: number, x3: number, y3: number): void;
+	OPEN: string;
+	CLOSE: string;
 
 	bezier(
 		x1: number,
