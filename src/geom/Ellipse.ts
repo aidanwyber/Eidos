@@ -8,7 +8,7 @@ export class Ellipse implements Renderable {
 	private focalLength: number;
 	private majorAxis: number;
 	private minorAxis: number;
-	readonly rotation: number;
+	readonly angle: number;
 	center: Vec;
 
 	/**
@@ -24,8 +24,8 @@ export class Ellipse implements Renderable {
 	 * @param width Width of the ellipse
 	 * @param height Height of the ellipse
 	 */
-	constructor(center: Vec, width: number, height: number);
-	constructor(...args: [Vec, Vec, number] | [Vec, number, number]) {
+	constructor(center: Vec, width: number, height: number, angle?: number);
+	constructor(...args: [Vec, Vec, number] | [Vec, number, number, number?]) {
 		if (
 			args.length === 3 &&
 			args[0] instanceof Vec &&
@@ -50,29 +50,38 @@ export class Ellipse implements Renderable {
 				throw new Error(
 					'Major axis must be greater than or equal to minor axis'
 				);
-			this.rotation = b.sub(a).angle();
+			this.angle = b.sub(a).angle();
 		} else if (
 			args.length === 3 &&
 			args[0] instanceof Vec &&
 			typeof args[1] === 'number' &&
-			typeof args[2] === 'number'
+			typeof args[2] === 'number' &&
+			typeof args[3] === 'number'
 		) {
 			// Construction from center, width, and height
-			const [center, width, height] = args as [Vec, number, number];
+			const [center, width, height, angle] = args as [
+				Vec,
+				number,
+				number,
+				number?
+			];
 			this.center = center.copy();
 			this.majorAxis = Math.max(width, height);
 			this.minorAxis = Math.min(width, height);
-			this.rotation = width >= height ? 0 : Math.PI / 2;
+			this.angle = width >= height ? 0 : Math.PI / 2;
 
 			// Calculate foci
 			const focalDist = Math.sqrt(
 				Math.pow(this.majorAxis / 2, 2) -
 					Math.pow(this.minorAxis / 2, 2)
 			);
-			const focalVec = Vec.fromAngle(this.rotation).scale(focalDist);
+			const focalVec = Vec.fromAngle(this.angle).scale(focalDist);
 			this.a = this.center.sub(focalVec);
 			this.b = this.center.add(focalVec);
 			this.focalLength = focalDist * 2;
+			angle; //// optional rotation
+			/// TODO not implemented
+			errrrrrrrrrrrrrrrrror;
 		} else {
 			throw new Error('Invalid constructor arguments for Ellipse');
 		}
@@ -93,7 +102,7 @@ export class Ellipse implements Renderable {
 	}
 
 	getRotation(): number {
-		return this.rotation;
+		return this.angle;
 	}
 
 	getEccentricity(): number {
@@ -107,10 +116,8 @@ export class Ellipse implements Renderable {
 	evaluate(theta: number): Vec {
 		const x = (this.majorAxis / 2) * Math.cos(theta);
 		const y = (this.minorAxis / 2) * Math.sin(theta);
-		const rotatedX =
-			x * Math.cos(this.rotation) - y * Math.sin(this.rotation);
-		const rotatedY =
-			x * Math.sin(this.rotation) + y * Math.cos(this.rotation);
+		const rotatedX = x * Math.cos(this.angle) - y * Math.sin(this.angle);
+		const rotatedY = x * Math.sin(this.angle) + y * Math.cos(this.angle);
 		return new Vec(this.center.x + rotatedX, this.center.y + rotatedY);
 	}
 
@@ -131,12 +138,12 @@ export class Ellipse implements Renderable {
 		const sc = scale ?? 1;
 		renderer.push();
 		renderer.translate(this.center.x, this.center.y);
-		renderer.rotate(this.rotation);
+		renderer.rotate(this.angle);
 		renderer.ellipse(0, 0, this.majorAxis * sc, this.minorAxis * sc);
 		renderer.pop();
 	}
 
 	toString(): string {
-		return `Ellipse(center: ${this.center}, a: ${this.a}, b: ${this.b}, major: ${this.majorAxis}, minor: ${this.minorAxis}, rotation: ${this.rotation})`;
+		return `Ellipse(center: ${this.center}, a: ${this.a}, b: ${this.b}, major: ${this.majorAxis}, minor: ${this.minorAxis}, rotation: ${this.angle})`;
 	}
 }
