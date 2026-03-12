@@ -1,16 +1,59 @@
-import type p5 from 'p5';
 import { Particle } from '../physics/Particle';
 import { Spring } from '../physics/Spring';
 import { Vec } from '../geom/Vec';
 
-export type P5Plus = p5 & { [key: string]: any };
+type SketchConstant = string | number;
+
+export interface SketchLike {
+	push(): void;
+	pop(): void;
+	translate(x: number, y: number): void;
+	rotate(angle: number): void;
+	scale(s: number, y?: number): void;
+
+	line(x1: number, y1: number, x2: number, y2: number): void;
+	circle(x: number, y: number, diameter: number): void;
+	ellipse(x: number, y: number, w: number, h: number): void;
+	rect(x: number, y: number, w: number, h: number): void;
+	point(x: number, y: number): void;
+
+	beginShape(kind?: SketchConstant): void;
+	vertex(x: number, y: number): void;
+	curveVertex(x: number, y: number): void;
+	endShape(mode?: SketchConstant): void;
+	curveTightness(tension: number): void;
+	bezier(
+		x1: number,
+		y1: number,
+		x2: number,
+		y2: number,
+		x3: number,
+		y3: number,
+		x4: number,
+		y4: number,
+	): void;
+
+	strokeWeight(weight: number): void;
+	stroke(...args: number[]): void;
+	text(str: string, x: number, y: number): void;
+	textAlign(horizAlign: SketchConstant, vertAlign?: SketchConstant): void;
+
+	CLOSE: SketchConstant;
+	CENTER: SketchConstant;
+	RIGHT: SketchConstant;
+	LEFT: SketchConstant;
+	TOP: SketchConstant;
+	BOTTOM: SketchConstant;
+}
+
+export type P5Plus = SketchLike;
 
 export class GFX {
-	private sketch: P5Plus;
+	private sketch: SketchLike;
 	private defaultStrokeWeight: number = 1;
 	private defaultParticleSize: number = 5;
 
-	constructor(sketch: P5Plus) {
+	constructor(sketch: SketchLike) {
 		this.sketch = sketch;
 	}
 
@@ -33,12 +76,10 @@ export class GFX {
 	}
 
 	translate(x: number, y: number): void {
-		// @ts-ignore
 		this.sketch.translate(x, y);
 	}
 
 	rotate(angle: number): void {
-		// @ts-ignore
 		this.sketch.rotate(angle);
 	}
 
@@ -48,7 +89,6 @@ export class GFX {
 		if (y === undefined) {
 			this.sketch.scale(x);
 		} else {
-			// @ts-ignore
 			this.sketch.scale(x, y);
 		}
 	}
@@ -56,8 +96,7 @@ export class GFX {
 	// Physics rendering
 	particle(p: Particle, size?: number): void {
 		const s = size ?? this.defaultParticleSize;
-		// @ts-ignore
-		this.sketch.circle(p.position.x, p.position.y, s);
+		this.sketch.circle(p.x, p.y, s);
 	}
 
 	particles(particles: Particle[], size?: number): void {
@@ -65,30 +104,13 @@ export class GFX {
 	}
 
 	spring(s: Spring, showRestLength: boolean = false): void {
-		this.sketch.line(
-			// @ts-ignore
-			s.a.position.x,
-			// @ts-ignore
-			s.a.position.y,
-			// @ts-ignore
-			s.b.position.x,
-			// @ts-ignore
-			s.b.position.y
-		);
+		this.sketch.line(s.a.x, s.a.y, s.b.x, s.b.y);
 
 		if (showRestLength) {
-			// @ts-ignore
-			const mid = s.a.position.copy().add(s.b.position).scale(0.5);
-			const angle = Math.atan2(
-				// @ts-ignore
-				s.b.position.y - s.a.position.y,
-				// @ts-ignore
-				s.b.position.x - s.a.position.x
-			);
+			const mid = s.a.copy().add(s.b).scale(0.5);
+			const angle = Math.atan2(s.b.y - s.a.y, s.b.x - s.a.x);
 			this.sketch.push();
-			// @ts-ignore
 			this.sketch.translate(mid.x, mid.y);
-			// @ts-ignore
 			this.sketch.rotate(angle);
 			this.sketch.strokeWeight(0.5);
 			this.sketch.stroke(255, 0, 0, 100);
@@ -106,7 +128,7 @@ export class GFX {
 		origin: Vec,
 		vec: Vec,
 		scale: number = 1,
-		arrowSize: number = 5
+		arrowSize: number = 5,
 	): void {
 		const end = origin.copy().add(vec.copy().scale(scale));
 		this.arrow(origin, end, arrowSize);
@@ -117,9 +139,7 @@ export class GFX {
 
 		const angle = Math.atan2(to.y - from.y, to.x - from.x);
 		this.sketch.push();
-		// @ts-ignore
 		this.sketch.translate(to.x, to.y);
-		// @ts-ignore
 		this.sketch.rotate(angle);
 		this.sketch.line(0, 0, -arrowSize, -arrowSize / 2);
 		this.sketch.line(0, 0, -arrowSize, arrowSize / 2);
@@ -166,10 +186,8 @@ export class GFX {
 	rect(x: number, y: number, width: number, height: number): void;
 	rect(a: Vec | number, b: number, c: number, d?: number): void {
 		if (a instanceof Vec) {
-			// @ts-ignore
 			this.sketch.rect(a.x, a.y, b, c);
 		} else if (typeof a === 'number' && d !== undefined) {
-			// @ts-ignore
 			this.sketch.rect(a, b, c, d);
 		}
 	}
@@ -178,10 +196,8 @@ export class GFX {
 	point(x: number, y: number): void;
 	point(a: Vec | number, b?: number): void {
 		if (a instanceof Vec) {
-			// @ts-ignore
 			this.sketch.point(a.x, a.y);
 		} else if (typeof a === 'number' && b !== undefined) {
-			// @ts-ignore
 			this.sketch.point(a, b);
 		}
 	}
@@ -190,20 +206,16 @@ export class GFX {
 	polygon(vertices: Vec[]): void {
 		if (vertices.length < 3) return;
 
-		// @ts-ignore
 		this.sketch.beginShape();
 		vertices.forEach(v => this.sketch.vertex(v.x, v.y));
-		// @ts-ignore
 		this.sketch.endShape(this.sketch.CLOSE);
 	}
 
 	polyline(vertices: Vec[]): void {
 		if (vertices.length < 2) return;
 
-		// @ts-ignore
 		this.sketch.beginShape();
 		vertices.forEach(v => this.sketch.vertex(v.x, v.y));
-		// @ts-ignore
 		this.sketch.endShape();
 	}
 
@@ -211,13 +223,9 @@ export class GFX {
 	curve(points: Vec[], tension: number = 0): void {
 		if (points.length < 4) return;
 
-		// @ts-ignore
 		this.sketch.curveTightness(tension);
-		// @ts-ignore
 		this.sketch.beginShape();
-		// @ts-ignore
 		points.forEach(p => this.sketch.curveVertex(p.x, p.y));
-		// @ts-ignore
 		this.sketch.endShape();
 	}
 
@@ -231,7 +239,7 @@ export class GFX {
 		width: number,
 		height: number,
 		offsetX: number = 0,
-		offsetY: number = 0
+		offsetY: number = 0,
 	): void {
 		this.sketch.push();
 		this.sketch.strokeWeight(0.5);
@@ -261,31 +269,24 @@ export class GFX {
 		align?: {
 			horizontal?: 'left' | 'center' | 'right';
 			vertical?: 'top' | 'center' | 'bottom';
-		}
+		},
 	): void {
 		if (align) {
 			this.sketch.push();
 			if (align.horizontal === 'center')
-				// @ts-ignore
 				this.sketch.textAlign(this.sketch.CENTER, this.sketch.CENTER);
 			else if (align.horizontal === 'right')
-				// @ts-ignore
 				this.sketch.textAlign(this.sketch.RIGHT);
 			else if (align.vertical === 'center')
-				// @ts-ignore
 				this.sketch.textAlign(this.sketch.LEFT, this.sketch.CENTER);
 			else if (align.vertical === 'top')
-				// @ts-ignore
 				this.sketch.textAlign(this.sketch.LEFT, this.sketch.TOP);
 			else if (align.vertical === 'bottom')
-				// @ts-ignore
 				this.sketch.textAlign(this.sketch.LEFT, this.sketch.BOTTOM);
 
-			// @ts-ignore
 			this.sketch.text(str, pos.x, pos.y);
 			this.sketch.pop();
 		} else {
-			// @ts-ignore
 			this.sketch.text(str, pos.x, pos.y);
 		}
 	}

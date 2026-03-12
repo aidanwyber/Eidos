@@ -41,47 +41,51 @@ export class Ellipse implements Renderable {
 			this.majorAxis = majorLength;
 			if (this.focalLength > this.majorAxis)
 				throw new Error(
-					'Focal length cannot be greater than major axis'
+					'Focal length cannot be greater than major axis',
 				);
 			this.minorAxis = Math.sqrt(
-				Math.pow(majorLength, 2) - Math.pow(this.focalLength, 2)
+				Math.pow(majorLength, 2) - Math.pow(this.focalLength, 2),
 			);
 			if (this.majorAxis < this.minorAxis)
 				throw new Error(
-					'Major axis must be greater than or equal to minor axis'
+					'Major axis must be greater than or equal to minor axis',
 				);
 			this.angle = b.sub(a).angle();
 		} else if (
-			args.length === 3 &&
+			(args.length === 3 || args.length === 4) &&
 			args[0] instanceof Vec &&
 			typeof args[1] === 'number' &&
 			typeof args[2] === 'number' &&
-			typeof args[3] === 'number'
+			(args[3] === undefined || typeof args[3] === 'number')
 		) {
 			// Construction from center, width, and height
 			const [center, width, height, angle] = args as [
 				Vec,
 				number,
 				number,
-				number?
+				number?,
 			];
+			if (width <= 0 || height <= 0) {
+				throw new Error(
+					'Ellipse width and height must both be greater than zero',
+				);
+			}
+
+			const baseAngle = width >= height ? 0 : Math.PI / 2;
 			this.center = center.copy();
 			this.majorAxis = Math.max(width, height);
 			this.minorAxis = Math.min(width, height);
-			this.angle = width >= height ? 0 : Math.PI / 2;
+			this.angle = (angle ?? 0) + baseAngle;
 
 			// Calculate foci
 			const focalDist = Math.sqrt(
 				Math.pow(this.majorAxis / 2, 2) -
-					Math.pow(this.minorAxis / 2, 2)
+					Math.pow(this.minorAxis / 2, 2),
 			);
 			const focalVec = Vec.fromAngle(this.angle).scale(focalDist);
 			this.a = this.center.sub(focalVec);
 			this.b = this.center.add(focalVec);
 			this.focalLength = focalDist * 2;
-			angle; //// optional rotation
-			/// TODO not implemented
-			errrrrrrrrrrrrrrrrror;
 		} else {
 			throw new Error('Invalid constructor arguments for Ellipse');
 		}

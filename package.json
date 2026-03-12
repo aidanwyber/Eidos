@@ -3,8 +3,8 @@
 	"version": "0.0.1",
 	"description": "Geometry and physics library for creative coding in JavaScript and TypeScript.",
 	"type": "module",
-	"main": "./dist/index.js",
-	"module": "./dist/index.mjs",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"keywords": [
 		"geometry",
@@ -24,10 +24,11 @@
 	"license": "MIT",
 	"author": "Aidan Wyber",
 	"files": [
-		"./dist"
+		"dist"
 	],
 	"scripts": {
-		"build": "tsup src/index.ts --format cjs,esm --dts"
+		"build": "tsup",
+		"prepack": "npm run build"
 	},
 	"devDependencies": {
 		"tsup": "^8.5.0",
@@ -36,27 +37,27 @@
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
-			"require": "./dist/index.js",
+			"require": "./dist/index.cjs",
 			"import": "./dist/index.js"
 		},
 		"./physics": {
 			"types": "./dist/physics/index.d.ts",
-			"require": "./dist/physics/index.js",
+			"require": "./dist/physics/index.cjs",
 			"import": "./dist/physics/index.js"
 		},
 		"./geom": {
 			"types": "./dist/geom/index.d.ts",
-			"require": "./dist/geom/index.js",
+			"require": "./dist/geom/index.cjs",
 			"import": "./dist/geom/index.js"
 		},
 		"./math": {
 			"types": "./dist/math/index.d.ts",
-			"require": "./dist/math/index.js",
+			"require": "./dist/math/index.cjs",
 			"import": "./dist/math/index.js"
 		},
 		"./gfx": {
 			"types": "./dist/gfx/index.d.ts",
-			"require": "./dist/gfx/index.js",
+			"require": "./dist/gfx/index.cjs",
 			"import": "./dist/gfx/index.js"
 		}
 	},

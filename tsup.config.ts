@@ -1,13 +1,18 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-	dts: true, // Generate .d.ts files
-	minify: true, // Minify output
-	sourcemap: true, // Generate sourcemaps
-	treeshake: true, // Remove unused code
-	splitting: true, // Split output into chunks
-	clean: true, // Clean output directory before building
-	outDir: 'dist', // Output directory
-	entry: ['src/index.ts'], // Entry point(s)
-	format: ['esm'], // Output format(s)
+	dts: true,
+	sourcemap: true,
+	treeshake: true,
+	splitting: false,
+	clean: true,
+	outDir: 'dist',
+	entry: {
+		'index': 'src/index.ts',
+		'physics/index': 'src/physics/index.ts',
+		'geom/index': 'src/geom/index.ts',
+		'math/index': 'src/math/index.ts',
+		'gfx/index': 'src/gfx/index.ts',
+	},
+	format: ['esm', 'cjs'],
 });
