@@ -27,7 +27,7 @@ new p5((sketch: p5) => {
 
 		// Create an attractor at center
 		attractor = physics.addParticle(
-			new Particle(sketch.width / 2, sketch.height / 2, 10)
+			new Particle(sketch.width / 2, sketch.height / 2, 10),
 		);
 		attractor.lock();
 
@@ -60,18 +60,18 @@ new p5((sketch: p5) => {
 		// Draw springs
 		sketch.stroke(200);
 		sketch.strokeWeight(1);
-		physics.springs.forEach(spring => {
+		for (const spring of physics.springs) {
 			gfx.spring(spring);
-		});
+		}
 
 		// Draw particles
 		sketch.fill(100, 150, 250);
 		sketch.noStroke();
-		physics.particles.forEach(particle => {
+		for (const particle of physics.particles) {
 			if (particle !== attractor) {
 				gfx.particle(particle, 10);
 			}
-		});
+		}
 
 		// Draw attractor
 		sketch.fill(250, 100, 100);
@@ -87,7 +87,7 @@ new p5((sketch: p5) => {
 	sketch.mousePressed = () => {
 		// Add particle at mouse position
 		const p = physics.addParticle(
-			new Particle(sketch.mouseX, sketch.mouseY)
+			new Particle(sketch.mouseX, sketch.mouseY),
 		);
 		p.velocity.set(sketch.random(-5, 5), sketch.random(-5, 5));
 	};
