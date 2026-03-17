@@ -28,11 +28,13 @@
 	],
 	"scripts": {
 		"build": "tsup",
-		"prepack": "npm run build"
+		"prepack": "npm run build",
+		"test": "npm run build && vitest run"
 	},
 	"devDependencies": {
 		"tsup": "^8.5.0",
-		"typescript": "^5.9.3"
+		"typescript": "^5.9.3",
+		"vitest": "^4.0.18"
 	},
 	"exports": {
 		".": {

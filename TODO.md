@@ -25,4 +25,5 @@
 - [ ] Make `remove*` APIs idempotent instead of deleting the last item when the target is missing.
   - `splice(indexOf(...), 1)` is used without checking for `-1`.
 - [ ] Add basic repository quality gates.
-  - Add at least `typecheck`, and decide whether this repo also wants tests and linting before publish.
+  - Vitest package coverage is now in place.
+  - Add at least `typecheck`, and decide whether this repo also wants linting before publish.
